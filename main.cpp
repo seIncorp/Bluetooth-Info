@@ -1,11 +1,14 @@
 #include "main.h"
 
-
+MAIN_FLAGS main_flags{ 0 };
 DEFAULT_DATA dd{ 0 };
 PSEARCHED_CACHED_DEVICES devices;
 
-int main()
+int main(int argc, char *argv[])
 {
+	parseCommand(argc, argv);
+	executeCommand();
+
 
 	if (connectToDevice())
 	{
@@ -18,18 +21,19 @@ int main()
 		/*********************************************************************************************/
 		/* LIST OF CACHED BTH SEARCHED DEVICES */
 
-		if (getBthDeviceInfo())
-		{
-			for (int a = 0; a < devices->numOfDevices; a++)
+		if (main_flags.cached_devices_flag)
+			if (getBthDeviceInfo())
 			{
-				devices->devices.at(a).print();
+				for (int a = 0; a < devices->numOfDevices; a++)
+				{
+					devices->devices.at(a).print();
+				}
 			}
-		}
-		else 
-		{
-			// TODO: print correct error
-			printf("ERROR!!!\n");
-		}
+			else 
+			{
+				// TODO: print correct error
+				printf("ERROR!!!\n");
+			}
 
 
 		
@@ -38,15 +42,16 @@ int main()
 		/*********************************************************************************************/
 		/* INFORMATION LOCAL BTH SYSTEM AND RADIO */
 
-		if (getLocalBthInfo())
-		{
+		if (main_flags.local_flag)
+			if (getLocalBthInfo())
+			{
 
-		}
-		else
-		{
-			// TODO: print correct error
-			printf("ERROR!!!\n");
-		}
+			}
+			else
+			{
+				// TODO: print correct error
+				printf("ERROR!!!\n");
+			}
 
 
 
@@ -77,4 +82,45 @@ int main()
 
 
 	return 0;
+}
+
+void printHelp()
+{
+	printf("Commands:\n");
+	printf("-h or -H\tto print help\n");
+	printf("-sd\t\tprint all cached of previously discovered remote radios that are Bluetooth-enabled\n");
+	printf("-local\t\tto get information about the local Bluetooth system and radio\n");
+	printf("\n");
+	printf("\n");
+}
+
+void parseCommand(int argc, char* argv[])
+{
+	for (int aa = 0; aa < argc; aa++)
+	{
+		if (std::string(argv[aa]) == "-H" || std::string(argv[aa]) == "-h")
+		{
+			main_flags.help_flag = 1;
+		}
+
+		if (std::string(argv[aa]) == "-sd")
+		{
+			main_flags.cached_devices_flag = 1;
+		}
+
+		if (std::string(argv[aa]) == "-local")
+		{
+			main_flags.local_flag = 1;
+		}
+	}
+}
+
+void executeCommand()
+{
+	if (main_flags.help_flag)
+	{
+		printHelp();
+
+		main_flags.help_flag = 0;
+	}
 }

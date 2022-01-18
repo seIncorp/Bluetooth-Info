@@ -25,3 +25,16 @@
 #pragma comment(lib, "Bthprops.lib")
 #pragma comment(lib, "Ole32.lib")
 
+
+typedef struct
+{
+	int help_flag;
+	int cached_devices_flag;
+	int local_flag;
+} MAIN_FLAGS;
+
+extern MAIN_FLAGS main_flags;
+
+void parseCommand(int argc, char* argv[]);
+void executeCommand();
+void printHelp();
