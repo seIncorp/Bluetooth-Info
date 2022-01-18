@@ -1,0 +1,3 @@
+﻿  COD_parser.cpp
+C:\Users\simon\source\repos\BluetoothInfo\BluetoothInfo\COD_parser.cpp(7,9): warning C4477: 'printf' : format string '%X' requires an argument of type 'unsigned int', but variadic argument 1 has type 'COD_data::<unnamed-type-octet3>'
+  BluetoothInfo.vcxproj -> C:\Users\simon\source\repos\BluetoothInfo\Debug\BluetoothInfo.exe
