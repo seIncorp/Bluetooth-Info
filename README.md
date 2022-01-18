@@ -18,3 +18,17 @@ print all cached of previously discovered remote radios that are Bluetooth-enabl
 
 -local   
 to get information about the local Bluetooth system and radio
+
+## Examples
+`main.exe -h`
+
+to print help
+
+`main.exe -sd`
+
+to print all cached devices
+
+`main.exe -local`
+
+to print radio and devide data
+
