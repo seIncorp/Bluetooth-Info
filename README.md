@@ -6,7 +6,7 @@ All info about devices, local radio, ...
 2. build and run
 
 ## How to run and use it
-1. in cmd (with ADMINISTRATION rights) move to the location of builded exe file
+1. in cmd (with ADMINISTRATION rights!!) move to the location of builded exe file
 2. run exe with commands (if you need help use '-h' or '-H')
 
 ## Commands
