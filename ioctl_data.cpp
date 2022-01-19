@@ -77,43 +77,41 @@ int getLocalBthInfo()
 
 	if (dd.bResult)
 	{
-		// TODO: create struct and save this data
-		printf("LOCAL DEVICE and RADIO DATA:\n");
-		
-		
-		printf("\tDEVICE DATA:\n");
 		BTH_DEVICE_INFO bdi = blri.localInfo;
-		printf("\t\tName: %s\n", bdi.name);
-		printf("\t\tAddress: %02X:%02X:%02X:%02X:%02X:%02X\n",
-			((BLUETOOTH_ADDRESS_STRUCT*)(&bdi.address))->rgBytes[5],
-			((BLUETOOTH_ADDRESS_STRUCT*)(&bdi.address))->rgBytes[4],
-			((BLUETOOTH_ADDRESS_STRUCT*)(&bdi.address))->rgBytes[3],
-			((BLUETOOTH_ADDRESS_STRUCT*)(&bdi.address))->rgBytes[2],
-			((BLUETOOTH_ADDRESS_STRUCT*)(&bdi.address))->rgBytes[1],
-			((BLUETOOTH_ADDRESS_STRUCT*)(&bdi.address))->rgBytes[0]);
-		printf("\t\tflags: %lu\n",bdi.flags);
-		printf("\t\tVersion: %lu.%lu (Major.Minor version HCI)\n", blri.hciVersion, blri.hciRevision);
-		printf("\t\tFlags: %X\n", blri.flags);	// TODO: search for each flag value
-		printf("\t\tclassOfDevice: %X\n",bdi.classOfDevice);
-		parseCODdata((COD_data *) &bdi.classOfDevice);
+		BTH_RADIO_INFO* bri = &blri.radioInfo;
 		
+		local_device_radio = new LOCAL_RADIO_DEVICE_DATA_S{ 
+																blri.flags,
+																blri.hciRevision,
+																blri.hciVersion
+															};
 		
+		DEVICE_DATA_S temp_d;
+		
+		temp_d.init(
+			((BLUETOOTH_ADDRESS_STRUCT*)(&bdi.address))->rgBytes,
+			bdi.flags,
+			bdi.name
+		);
+		local_device_radio->device = &temp_d;
 
-		BTH_RADIO_INFO bri = blri.radioInfo;
-		printf("\tRADIO DATA:\n");
+		PDEVICE_PARSED_COD_DATA cod_temp = new DEVICE_PARSED_COD_DATA();
+		parseCODdata((COD_data*)&bdi.classOfDevice, cod_temp);
+		local_device_radio->device->cod = cod_temp;
 
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
+		RADIO_DATA_S temp_s{ bri->lmpSupportedFeatures ,bri->mfg,bri->lmpSubversion, bri->lmpVersion };
+		local_device_radio->radio = &temp_s;
 
-
+		// TODO: preveri tezavo s prikazom zunaj
+		local_device_radio->print();
 
 		return 1;
 	}
 
 	return 0;
 }
+
+
 
 
 

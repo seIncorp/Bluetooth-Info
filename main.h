@@ -16,6 +16,7 @@
 #include <bthioctl.h>
 
 
+
 #include "COD_parser.h"
 #include "ioctl_data.h"
 #include "devices.h"
@@ -31,6 +32,7 @@ typedef struct
 	int help_flag;
 	int cached_devices_flag;
 	int local_flag;
+	int devInfo_flag;
 } MAIN_FLAGS;
 
 extern MAIN_FLAGS main_flags;

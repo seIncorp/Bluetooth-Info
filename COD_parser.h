@@ -29,4 +29,33 @@ typedef struct
 
 } COD_data;
 
-void parseCODdata(COD_data* data);
+typedef struct DEVICE_PARSED_COD_DATA_S
+{
+	std::vector<char*> major_service_class;
+	std::vector<char*> major_device_class;
+	std::vector<char*> minor_device_class;
+
+	void print()
+	{
+		printf("\tDEVICE COD data: \n");
+
+		printf("\t\tMajor service class:\n");
+		for(int a = 0; a < major_service_class.size(); a++)
+			printf("\t\t\t%s\n", major_service_class.at(a));
+
+		printf("\t\tMajor device class:\n");
+		for (int a = 0; a < major_device_class.size(); a++)
+			printf("\t\t\t%s\n", major_device_class.at(a));
+
+		printf("\t\tMinor device class:\n");
+		for (int a = 0; a < minor_device_class.size(); a++)
+			printf("\t\t\t%s\n", minor_device_class.at(a));
+		printf("\n");
+	}
+
+
+} DEVICE_PARSED_COD_DATA, *PDEVICE_PARSED_COD_DATA;
+
+
+
+void parseCODdata(COD_data* data, PDEVICE_PARSED_COD_DATA cod);

@@ -33,7 +33,6 @@ typedef struct CACHED_DEVICE_S
 
 } CACHED_DEVICE, *PCACHED_DEVICE;
 
-
 typedef struct SEARCHED_CACHED_DEVICES_S
 {
 	ULONG numOfDevices;
@@ -43,4 +42,131 @@ typedef struct SEARCHED_CACHED_DEVICES_S
 
 
 
+
+
+typedef struct DEVICE_DATA_S
+{
+	void init(BYTE add[6], ULONG f, char n[BTH_MAX_NAME_SIZE])
+	{
+		address[0] = add[0];
+		address[1] = add[1];
+		address[2] = add[2];
+		address[3] = add[3];
+		address[4] = add[4];
+		address[5] = add[5];
+
+		flags = f;
+		
+		strcpy_s(name, BTH_MAX_NAME_SIZE, n);
+	};
+	
+	void print()
+	{
+		printf("\tDEVICE DATA:\n");
+		printf("\t\tName: %s\n", name);
+		printf("\t\tAddress: %02X:%02X:%02X:%02X:%02X:%02X\n",
+			address[5],
+			address[4],
+			address[3],
+			address[2],
+			address[1],
+			address[0]);
+		printf("\t\tflags: %lu\n", flags);
+
+		cod->print();
+	}
+
+	CHAR name[BTH_MAX_NAME_SIZE];
+	BYTE address[6];
+	ULONG flags;
+	PDEVICE_PARSED_COD_DATA cod;
+
+} DEVICE_DATA, *PDEVICE_DATA;
+
+typedef struct RADIO_DATA_S
+{
+	RADIO_DATA_S(ULONGLONG lsf, USHORT m, USHORT ls, UCHAR lv) :
+		LMP_SupportedFeatures{lsf}, 
+		mfg{m},
+		LMP_minor_version{ls},
+		LMP_major_version{lv}
+	{
+
+	};
+	
+	void print()
+	{
+		printf("\tRADIO DATA:\n");
+		printf("\t\tLMP Supported Features: %X\n", LMP_SupportedFeatures);
+		printf("\t\tID of the manufacturer: %d\n", mfg);
+		printf("\t\tLMP Major version: %X\n", LMP_major_version);
+		printf("\t\tLMP Minor version: %d\n", LMP_minor_version);
+	}
+
+
+	ULONGLONG LMP_SupportedFeatures;
+	USHORT mfg;
+	USHORT LMP_minor_version;
+	UCHAR LMP_major_version;
+
+
+
+} RADIO_DATA, *PRADIO_DATA;
+
+typedef struct LOCAL_RADIO_DEVICE_DATA_S
+{
+	LOCAL_RADIO_DEVICE_DATA_S(
+		ULONG flags, 
+		USHORT hciRevision, 
+		UCHAR hciVersion) 
+	: 
+	flags_{flags},
+	HCI_minor_version_{ hciRevision },
+	HCI_major_version_{ hciVersion }
+	{
+
+	};
+
+	void print()
+	{
+		printf("LOCAL DEVICE and RADIO DATA:\n");
+		printf("\tFlags: %X\n", flags_);
+		printf("\tVersion: %lu.%lu (Major.Minor version HCI)\n",
+			HCI_major_version_,
+			HCI_minor_version_
+		);
+		device->print();
+		radio->print();
+	}
+	
+	ULONG flags_;
+	USHORT HCI_minor_version_;
+	UCHAR HCI_major_version_;
+
+	PDEVICE_DATA device;
+	PRADIO_DATA radio;
+
+} LOCAL_RADIO_DEVICE_DATA, *PLOCAL_RADIO_DEVICE_DATA;
+
+
+
+
+
+
+
+
+
+
+
 extern PSEARCHED_CACHED_DEVICES devices;
+extern PLOCAL_RADIO_DEVICE_DATA local_device_radio;
+
+
+
+
+
+
+
+
+
+
