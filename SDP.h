@@ -16,7 +16,7 @@ namespace SDP
 		A_V_RemoteControlTarget				= 0x110C,
 		A_V_RemoteControlController			= 0x110F,
 		PANU								= 0x1115,
-		_NAP									= 0x1116,
+		_NAP								= 0x1116,
 		HandsfreeAudioGateway				= 0x111F,
 		Phonebook_Access_PSE				= 0x112F,
 		Phonebook_Access					= 0x1130,
@@ -206,6 +206,19 @@ namespace SDP
 
 	} ATTR_ID;
 	
+	typedef struct VALUE_S
+	{
+		ATTRIBUTE_ID_ELEMENT* element;
+
+		int size_bytes;						// size value for element value
+		int additional_bits_flag;
+		int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
+		ULONG size_bytes_additional;
+
+		BYTE* value;
+
+	} VALUE;
+
 
 	namespace FUNCTIONS
 	{
@@ -215,6 +228,9 @@ namespace SDP
 		std::string getNetworkPacketTypeString(SHORT type);
 
 		BOOL call_IOCTL_BTH_SDP_ATTRIBUTE_SEARCH(BTH_SDP_ATTRIBUTE_SEARCH_REQUEST* bsasr, BYTE bssr_response[], int res_length);
+		BOOL set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(ULONG recordHandle, HANDLE_SDP_TYPE aa, USHORT minAttr, USHORT maxAttr, BYTE res[], int res_length);
+
+		void printResponse( BYTE bssr_response[]);
 
 		int getAndParse_SERVICE_RECORD_HANDLE(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa);
@@ -225,6 +241,11 @@ namespace SDP
 		int getAndParse_SERVICE_AVAILABILITY(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_SERVICE_DESCRIPTION(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 
+		template<class A, class B>
+		int set_save_ATTRIBUTE_ELEMENT(A id_handle, B res, int res_length);
+
+		template<class A, class B>
+		int set_save_VALUE_ELEMENT(A id_handle, B res, int res_length, int position);
 
 	};
 
@@ -232,18 +253,11 @@ namespace SDP
 	{
 		ATTR_ID* attr_id;
 
-		struct
+		struct VV : VALUE
 		{
-			ATTRIBUTE_ID_ELEMENT* element;
-
-			int size_bytes;						// size value for element value
-			int additional_bits_flag;
-			int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-
-
-			BYTE* value;
 
 		} VALUE;
+
 
 		void print()
 		{
@@ -295,21 +309,13 @@ namespace SDP
 	{
 		ATTR_ID* attr_id;
 
-		struct
+		struct VV : VALUE
 		{
-			ATTRIBUTE_ID_ELEMENT* element;
-
-			int size_bytes;						// size value for element value
-			int additional_bits_flag;
-			int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-			ULONG size_bytes_additional;
-
-			BYTE* value;
 
 			int num_classes;
 			SERVICE_CLASS* classes;				// pointer to array of SERVICE_CLASS objects
-
 		} VALUE;
+
 
 		void print()
 		{
@@ -377,23 +383,16 @@ namespace SDP
 	{
 		ATTR_ID* attr_id;
 
-		struct
+		struct VV : VALUE
 		{
-			ATTRIBUTE_ID_ELEMENT* element;
-
-			int size_bytes;						// size value for element value
-			int additional_bits_flag;
-			int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-			ULONG size_bytes_additional;
-
-			BYTE* value;						// celotna vsebina Value-a
-
 			int num_protocols;
 
 			PROTOCOL_DESCRIPTOR* protocols;
 
 			int _BNEP_flag;
+			
 		} VALUE;
+
 
 		void print()
 		{
@@ -559,50 +558,28 @@ namespace SDP
 
 	typedef struct SERVICE_NAME_S
 	{
-		struct
-		{
-			ATTRIBUTE_ID_ELEMENT* element;
+		ATTR_ID* attr_id;
 
-			int size_bytes;						// size value for element value
-			int additional_bits_flag;
-			int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-
-			BYTE* value;
-
-		} ATTR_ID;
-
-		
-
-		struct
-		{
-			ATTRIBUTE_ID_ELEMENT* element;
-
-			int size_bytes;						// size value for element value
-			int additional_bits_flag;
-			int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-			ULONG size_bytes_additional;
-
-			BYTE* value;						// celotna vsebina Value-a
-
-		} VALUE;
+		struct VV : VALUE
+		{} VALUE;
 
 
 		void print()
 		{
 			printf("ATTRIBUTE ID:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(ATTR_ID.element->element.type).c_str(), ATTR_ID.element->element.type);
+			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
 
-			if (ATTR_ID.additional_bits_flag)
+			if (attr_id->additional_bits_flag)
 			{
-				printf("Additional size: %d\n", ATTR_ID.additional_bits_for_size);
+				printf("Additional size: %d\n", attr_id->additional_bits_for_size);
 			}
 			else
 			{
-				printf("Size: %d Bytes [%d]\n", ATTR_ID.size_bytes, ATTR_ID.size_bytes);
+				printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
 
 				printf("Value: 0x");
-				for (int a = 0; a < ATTR_ID.size_bytes; a++)
-					printf("%02X", ATTR_ID.value[a]);
+				for (int a = 0; a < attr_id->size_bytes; a++)
+					printf("%02X", attr_id->value[a]);
 				printf("\n");
 			}
 
@@ -636,29 +613,10 @@ namespace SDP
 	
 	typedef struct BLUETOOTH_PROFILE_DESCRIPTOR_LIST_S
 	{
-		struct
+		ATTR_ID* attr_id;
+
+		struct VV : VALUE
 		{
-			ATTRIBUTE_ID_ELEMENT* element;
-
-			int size_bytes;						// size value for element value
-			int additional_bits_flag;
-			int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-
-			BYTE* value;
-
-		} ATTR_ID;
-
-		struct
-		{
-			ATTRIBUTE_ID_ELEMENT* element;
-
-			int size_bytes;						// size value for element value
-			int additional_bits_flag;
-			int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-			ULONG size_bytes_additional;
-
-			BYTE* value;						// celotna vsebina Value-a
-
 			/* PROFILES */
 
 			SHORT profile_UUID;
@@ -667,26 +625,24 @@ namespace SDP
 			// samo za vec profilov
 			//int num_Profiles_list;
 			//BLUETOOTH_PROFILE* pProfile_list;
-
-
 		} VALUE;
 
 		void print()
 		{
 			printf("ATTRIBUTE ID:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(ATTR_ID.element->element.type).c_str(), ATTR_ID.element->element.type);
+			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
 
-			if (ATTR_ID.additional_bits_flag)
+			if (attr_id->additional_bits_flag)
 			{
-				printf("Additional size: %d\n", ATTR_ID.additional_bits_for_size);
+				printf("Additional size: %d\n", attr_id->additional_bits_for_size);
 			}
 			else
 			{
-				printf("Size: %d Bytes [%d]\n", ATTR_ID.size_bytes, ATTR_ID.size_bytes);
+				printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
 
 				printf("Value: 0x");
-				for (int a = 0; a < ATTR_ID.size_bytes; a++)
-					printf("%02X", ATTR_ID.value[a]);
+				for (int a = 0; a < attr_id->size_bytes; a++)
+					printf("%02X", attr_id->value[a]);
 				printf("\n");
 			}
 
@@ -726,53 +682,33 @@ namespace SDP
 
 	typedef struct LANGUAGE_BASE_ATTRIBUTE_ID_LIST_S
 	{
-		struct
+		ATTR_ID* attr_id;
+
+		struct VV : VALUE
 		{
-			ATTRIBUTE_ID_ELEMENT* element;
-
-			int size_bytes;						// size value for element value
-			int additional_bits_flag;
-			int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-
-			BYTE* value;
-
-		} ATTR_ID;
-
-		struct
-		{
-			ATTRIBUTE_ID_ELEMENT* element;
-
-			int size_bytes;						// size value for element value
-			int additional_bits_flag;
-			int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-			ULONG size_bytes_additional;
-
-			BYTE* value;						// celotna vsebina Value-a
-
 			// TODO: naredi ce je teh tripletov vec kot eden (trenutno je narejeno samo za enega)
 
 			SHORT triplet_id_natural_lang;
 			SHORT triplet_id_char_encoding;
 			SHORT triplet_attribute_id;
-
 		} VALUE;
 
 		void print()
 		{
 			printf("ATTRIBUTE ID:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(ATTR_ID.element->element.type).c_str(), ATTR_ID.element->element.type);
+			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
 
-			if (ATTR_ID.additional_bits_flag)
+			if (attr_id->additional_bits_flag)
 			{
-				printf("Additional size: %d\n", ATTR_ID.additional_bits_for_size);
+				printf("Additional size: %d\n", attr_id->additional_bits_for_size);
 			}
 			else
 			{
-				printf("Size: %d Bytes [%d]\n", ATTR_ID.size_bytes, ATTR_ID.size_bytes);
+				printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
 
 				printf("Value: 0x");
-				for (int a = 0; a < ATTR_ID.size_bytes; a++)
-					printf("%02X", ATTR_ID.value[a]);
+				for (int a = 0; a < attr_id->size_bytes; a++)
+					printf("%02X", attr_id->value[a]);
 				printf("\n");
 			}
 
@@ -813,48 +749,28 @@ namespace SDP
 
 	typedef struct SERVICE_DESCRIPTION_S
 	{
-		struct
-		{
-			ATTRIBUTE_ID_ELEMENT* element;
+		ATTR_ID* attr_id;
 
-			int size_bytes;						// size value for element value
-			int additional_bits_flag;
-			int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-
-			BYTE* value;
-
-		} ATTR_ID;
-
-		struct
-		{
-			ATTRIBUTE_ID_ELEMENT* element;
-
-			int size_bytes;						// size value for element value
-			int additional_bits_flag;
-			int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-			ULONG size_bytes_additional;
-
-			BYTE* value;						// celotna vsebina Value-a
-
-		} VALUE;
+		struct VV : VALUE
+		{} VALUE;
 
 
 		void print()
 		{
 			printf("ATTRIBUTE ID:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(ATTR_ID.element->element.type).c_str(), ATTR_ID.element->element.type);
+			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
 
-			if (ATTR_ID.additional_bits_flag)
+			if (attr_id->additional_bits_flag)
 			{
-				printf("Additional size: %d\n", ATTR_ID.additional_bits_for_size);
+				printf("Additional size: %d\n", attr_id->additional_bits_for_size);
 			}
 			else
 			{
-				printf("Size: %d Bytes [%d]\n", ATTR_ID.size_bytes, ATTR_ID.size_bytes);
+				printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
 
 				printf("Value: 0x");
-				for (int a = 0; a < ATTR_ID.size_bytes; a++)
-					printf("%02X", ATTR_ID.value[a]);
+				for (int a = 0; a < attr_id->size_bytes; a++)
+					printf("%02X", attr_id->value[a]);
 				printf("\n");
 			}
 
@@ -891,7 +807,7 @@ namespace SDP
 	} SERVICE_DESCRIPTION, *PSERVICE_DESCRIPTION;
 
 	
-	/* USED ONLY IN NAP */
+	/* USED ONLY IN NAP and PANU */
 	namespace NAP
 	{
 		typedef enum
@@ -910,50 +826,29 @@ namespace SDP
 
 		typedef struct SECURITY_DESCRIPTION_S
 		{
-			struct
+			ATTR_ID* attr_id;
+
+			struct VV : VALUE
 			{
-				ATTRIBUTE_ID_ELEMENT* element;
-
-				int size_bytes;						// size value for element value
-				int additional_bits_flag;
-				int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-
-				BYTE* value;
-
-			} ATTR_ID;
-
-			struct
-			{
-				ATTRIBUTE_ID_ELEMENT* element;
-
-				int size_bytes;						// size value for element value
-				int additional_bits_flag;
-				int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-				ULONG size_bytes_additional;
-
-				BYTE* value;						// celotna vsebina Value-a
-
 				SHORT security_value;
-
 			} VALUE;
-
 
 			void print()
 			{
 				printf("ATTRIBUTE ID:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(ATTR_ID.element->element.type).c_str(), ATTR_ID.element->element.type);
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
 
-				if (ATTR_ID.additional_bits_flag)
+				if (attr_id->additional_bits_flag)
 				{
-					printf("Additional size: %d\n", ATTR_ID.additional_bits_for_size);
+					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
 				}
 				else
 				{
-					printf("Size: %d Bytes [%d]\n", ATTR_ID.size_bytes, ATTR_ID.size_bytes);
+					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
 
 					printf("Value: 0x");
-					for (int a = 0; a < ATTR_ID.size_bytes; a++)
-						printf("%02X", ATTR_ID.value[a]);
+					for (int a = 0; a < attr_id->size_bytes; a++)
+						printf("%02X", attr_id->value[a]);
 					printf("\n");
 				}
 
@@ -991,49 +886,29 @@ namespace SDP
 
 		typedef struct NET_ACCESS_TYPE_S
 		{
-			struct
+			ATTR_ID* attr_id;
+
+			struct VV : VALUE
 			{
-				ATTRIBUTE_ID_ELEMENT* element;
-
-				int size_bytes;						// size value for element value
-				int additional_bits_flag;
-				int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-
-				BYTE* value;
-
-			} ATTR_ID;
-
-			struct
-			{
-				ATTRIBUTE_ID_ELEMENT* element;
-
-				int size_bytes;						// size value for element value
-				int additional_bits_flag;
-				int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-				ULONG size_bytes_additional;
-
-				BYTE* value;						// celotna vsebina Value-a
-
 				SHORT NetAccessType;
-
 			} VALUE;
 
 			void print()
 			{
 				printf("ATTRIBUTE ID:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(ATTR_ID.element->element.type).c_str(), ATTR_ID.element->element.type);
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
 
-				if (ATTR_ID.additional_bits_flag)
+				if (attr_id->additional_bits_flag)
 				{
-					printf("Additional size: %d\n", ATTR_ID.additional_bits_for_size);
+					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
 				}
 				else
 				{
-					printf("Size: %d Bytes [%d]\n", ATTR_ID.size_bytes, ATTR_ID.size_bytes);
+					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
 
 					printf("Value: 0x");
-					for (int a = 0; a < ATTR_ID.size_bytes; a++)
-						printf("%02X", ATTR_ID.value[a]);
+					for (int a = 0; a < attr_id->size_bytes; a++)
+						printf("%02X", attr_id->value[a]);
 					printf("\n");
 				}
 
@@ -1069,32 +944,326 @@ namespace SDP
 		
 		typedef struct MAX_NET_ACCESS_RATE_S
 		{
-			//struct
-			//{
-			//	ATTRIBUTE_ID_ELEMENT* element;
-
-			//	int size_bytes;						// size value for element value
-			//	int additional_bits_flag;
-			//	int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-
-			//	BYTE* value;
-
-			//} ATTR_ID;
-
 			ATTR_ID* attr_id;
 
-			struct
+			struct VV : VALUE
 			{
-				ATTRIBUTE_ID_ELEMENT* element;
+				DWORD Maximum_possible_Network_Access_Data_Rate;
+			} VALUE;
 
-				int size_bytes;						// size value for element value
-				int additional_bits_flag;
-				int additional_bits_for_size;		// additional bytes for size value (after this you must read those bytes for real size of element value)
-				ULONG size_bytes_additional;
+			void print()
+			{
+				printf("ATTRIBUTE ID:\n");
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
 
-				BYTE* value;						// celotna vsebina Value-a
+				if (attr_id->additional_bits_flag)
+				{
+					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
+				}
+				else
+				{
+					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
 
+					printf("Value: 0x");
+					for (int a = 0; a < attr_id->size_bytes; a++)
+						printf("%02X", attr_id->value[a]);
+					printf("\n");
+				}
+
+				printf("VALUE ELEMENT:\n");
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
+				if (VALUE.additional_bits_flag)
+				{
+					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
+					if (VALUE.additional_bits_for_size == 1)
+					{
+						printf("Data size: %d\n", VALUE.size_bytes);
+
+						printf("Value: ");
+						for (int a = 0; a < VALUE.size_bytes; a++)
+							printf("%02X", VALUE.value[a]);
+						printf("\n");
+					}
+				}
+				else
+				{
+					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
+
+					printf("Value: 0x");
+					for (int a = 0; a < VALUE.size_bytes; a++)
+						printf("%02X", VALUE.value[a]);
+					printf("\n");
+				}
+
+				printf("Maximum possible Network Access Data Rate: 0x%08X\n",VALUE.Maximum_possible_Network_Access_Data_Rate);
+			}
+
+		} MAX_NET_ACCESS_RATE, *PMAX_NET_ACCESS_RATE;
+
+
+		int getAndParse_SECURITY_DESCRIPTION_PAN(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		int getAndParse_NET_ACCESS_TYPE_PAN(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		int getAndParse_MAX_NET_ACCESS_RATE_PAN(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+
+
+	};
+	
+	namespace MAP
+	{
+		typedef enum
+		{
+			GoepL2capPsm			= 0x0200,
+			MASInstanceID			= 0x0315,
+			SupportedMessageTypes	= 0x0316,
+			MapSupportedFeatures	= 0x0317
+
+		} ATTRIBUTE_ID_MAP;
+
+		struct SUPPORTED_FEATURES_MESSAGES_S
+		{
+			struct SMT_S
+			{
+				BYTE a0 : 1;
+				BYTE a1 : 1;
+				BYTE a2 : 1;
+				BYTE a3 : 1;
+				BYTE a4 : 1;
+				BYTE : 3;
+			};
+
+			SMT_S* ttt;
+
+
+			struct SF_S
+			{
+				BYTE a0 : 1;
+				BYTE a1 : 1;
+				BYTE a2 : 1;
+				BYTE a3 : 1;
+				BYTE a4 : 1;
+				BYTE a5 : 1;
+				BYTE a6 : 1;
+				BYTE a7 : 1;
+				BYTE a8 : 1;
+				BYTE a9 : 1;
+				BYTE a10 : 1;
+				BYTE a11 : 1;
+				BYTE a12 : 1;
+				BYTE a13 : 1;
+				BYTE a14 : 1;
+				BYTE a15 : 1;
+				BYTE a16 : 1;
+				BYTE a17 : 1;
+				BYTE a18 : 1;
+				BYTE a19 : 1;
+				BYTE a20 : 1;
+				BYTE a21 : 1;
+				BYTE a22 : 1;
+				BYTE : 6;
+				BYTE : 3;
+			};
+
+			SF_S* aaa;
+			
+			SUPPORTED_FEATURES_MESSAGES_S(BYTE *a) : ttt((SMT_S*)a)
+			{
+				//printf("FROM STRUCT --> %X\n", *a);
+			};
+
+			SUPPORTED_FEATURES_MESSAGES_S(DWORD* a) : aaa((SF_S*)a)
+			{
+				//printf("FROM STRUCT --> %X\n", *a);
+			};
+			
+			
+		} ;
+
+		std::string getMessageTypesString(SUPPORTED_FEATURES_MESSAGES_S* sfm);
+		std::string getSupportedFeaturesString(SUPPORTED_FEATURES_MESSAGES_S* sfm);
+
+
+		typedef struct GOEPL2CAPPSM_S
+		{
+			ATTR_ID* attr_id;
+
+			struct VV : VALUE
+			{
 				
+			} VALUE;
+
+			void print()
+			{
+				printf("ATTRIBUTE ID:\n");
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+
+				if (attr_id->additional_bits_flag)
+				{
+					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
+				}
+				else
+				{
+					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
+
+					printf("Value: 0x");
+					for (int a = 0; a < attr_id->size_bytes; a++)
+						printf("%02X", attr_id->value[a]);
+					printf("\n");
+				}
+
+				printf("VALUE ELEMENT:\n");
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
+				if (VALUE.additional_bits_flag)
+				{
+					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
+					if (VALUE.additional_bits_for_size == 1)
+					{
+						printf("Data size: %d\n", VALUE.size_bytes);
+
+						printf("Value: ");
+						for (int a = 0; a < VALUE.size_bytes; a++)
+							printf("%02X", VALUE.value[a]);
+						printf("\n");
+					}
+				}
+				else
+				{
+					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
+
+					printf("Value: 0x");
+					for (int a = 0; a < VALUE.size_bytes; a++)
+						printf("%02X", VALUE.value[a]);
+					printf("\n");
+				}
+
+			}
+
+
+		} GOEPL2CAPPSM, * PGOEPL2CAPPSM;
+
+		typedef struct SUPPORTED_MESSAGE_TYPES_S
+		{
+			ATTR_ID* attr_id;
+
+			struct VV : VALUE
+			{
+				SUPPORTED_FEATURES_MESSAGES_S* sfm;
+
+			} VALUE;
+
+			void print()
+			{
+				printf("ATTRIBUTE ID:\n");
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+
+				if (attr_id->additional_bits_flag)
+				{
+					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
+				}
+				else
+				{
+					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
+
+					printf("Value: 0x");
+					for (int a = 0; a < attr_id->size_bytes; a++)
+						printf("%02X", attr_id->value[a]);
+					printf("\n");
+				}
+
+				printf("VALUE ELEMENT:\n");
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
+				if (VALUE.additional_bits_flag)
+				{
+					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
+					if (VALUE.additional_bits_for_size == 1)
+					{
+						printf("Data size: %d\n", VALUE.size_bytes);
+
+						printf("Value: ");
+						for (int a = 0; a < VALUE.size_bytes; a++)
+							printf("%02X", VALUE.value[a]);
+						printf("\n");
+					}
+				}
+				else
+				{
+					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
+
+					printf("Value: 0x");
+					for (int a = 0; a < VALUE.size_bytes; a++)
+						printf("%02X", VALUE.value[a]);
+					printf("\n");
+				}
+
+			}
+
+
+		} SUPPORTED_MESSAGE_TYPES, * PSUPPORTED_MESSAGE_TYPES;
+
+		typedef struct MAS_INSTANCE_ID_S
+		{
+			ATTR_ID* attr_id;
+
+			struct VV : VALUE
+			{
+
+			} VALUE;
+
+			void print()
+			{
+				printf("ATTRIBUTE ID:\n");
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+
+				if (attr_id->additional_bits_flag)
+				{
+					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
+				}
+				else
+				{
+					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
+
+					printf("Value: 0x");
+					for (int a = 0; a < attr_id->size_bytes; a++)
+						printf("%02X", attr_id->value[a]);
+					printf("\n");
+				}
+
+				printf("VALUE ELEMENT:\n");
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
+				if (VALUE.additional_bits_flag)
+				{
+					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
+					if (VALUE.additional_bits_for_size == 1)
+					{
+						printf("Data size: %d\n", VALUE.size_bytes);
+
+						printf("Value: ");
+						for (int a = 0; a < VALUE.size_bytes; a++)
+							printf("%02X", VALUE.value[a]);
+						printf("\n");
+					}
+				}
+				else
+				{
+					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
+
+					printf("Value: 0x");
+					for (int a = 0; a < VALUE.size_bytes; a++)
+						printf("%02X", VALUE.value[a]);
+					printf("\n");
+				}
+
+			}
+
+
+		} MAS_INSTANCE_ID, * PMAS_INSTANCE_ID;
+
+		typedef struct MAP_SUPPORTED_FEATURES_S
+		{
+			ATTR_ID* attr_id;
+
+			struct VV : VALUE
+			{
+				SUPPORTED_FEATURES_MESSAGES_S* sfm;
 
 			} VALUE;
 
@@ -1143,18 +1312,22 @@ namespace SDP
 				}
 
 				
+
+
 			}
 
-		} MAX_NET_ACCESS_RATE, *PMAX_NET_ACCESS_RATE;
+
+		} MAP_SUPPORTED_FEATURES, * PMAP_SUPPORTED_FEATURES;
 
 
-		int getAndParse_SECURITY_DESCRIPTION_PAN(ULONG recordHandle, HANDLE_SDP_TYPE aa);
-		int getAndParse_NET_ACCESS_TYPE_PAN(ULONG recordHandle, HANDLE_SDP_TYPE aa);
-		int getAndParse_MAX_NET_ACCESS_RATE_PAN(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		int getAndParse_GOEPL2CAPPSM_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		int getAndParse_SUPPORTED_MESSAGE_TYPES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		int getAndParse_MAS_INSTANCE_ID_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		int getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+
 
 
 	};
-	
 };
 
 /*
