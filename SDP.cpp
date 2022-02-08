@@ -1072,31 +1072,31 @@ int SDP::NAP::getAndParse_MAX_NET_ACCESS_RATE_PAN(ULONG recordHandle, HANDLE_SDP
 
 std::string SDP::MAP::getMessageTypesString(SUPPORTED_FEATURES_MESSAGES_S* sfm)
 {
-	std::string temp;
+	std::string temp = "";
 
 	if (sfm->ttt->a0)
 	{
-		temp = "EMAIL";
+		temp += "EMAIL\n";
 	}
 
 	if (sfm->ttt->a1)
 	{
-		temp = "SMS_GSM";
+		temp += "SMS_GSM\n";
 	}
 
 	if (sfm->ttt->a2)
 	{
-		temp = "SMS_CDMA";
+		temp += "SMS_CDMA\n";
 	}
 
 	if (sfm->ttt->a3)
 	{
-		temp = "MMS";
+		temp += "MMS\n";
 	}
 
 	if (sfm->ttt->a4)
 	{
-		temp = "IM";
+		temp += "IM\n";
 	}
 
 	return temp;
@@ -1104,121 +1104,121 @@ std::string SDP::MAP::getMessageTypesString(SUPPORTED_FEATURES_MESSAGES_S* sfm)
 
 std::string SDP::MAP::getSupportedFeaturesString(SUPPORTED_FEATURES_MESSAGES_S* sfm)
 {
-	std::string temp;
+	std::string temp = "";
 
 	if (sfm->aaa->a0)
 	{
-		temp = "Notification Registration Feature";
+		temp += "Notification Registration Feature\n";
 	}
 
 	if (sfm->aaa->a1)
 	{
-		temp = "Notification Feature";
+		temp += "Notification Feature\n";
 	}
 
 	if (sfm->aaa->a2)
 	{
-		temp = "Browsing Feature";
+		temp += "Browsing Feature\n";
 	}
 
 	if (sfm->aaa->a3)
 	{
-		temp = "Uploading Feature";
+		temp += "Uploading Feature\n";
 	}
 
 	if (sfm->aaa->a4)
 	{
-		temp = "Delete Feature";
+		temp += "Delete Feature\n";
 	}
 
 	if (sfm->aaa->a5)
 	{
-		temp = "Instance Information Feature";
+		temp += "Instance Information Feature\n";
 	}
 
 	if (sfm->aaa->a6)
 	{
-		temp = " Extended Event Report 1.1";
+		temp += "Extended Event Report 1.1\n";
 	}
 
 	if (sfm->aaa->a7)
 	{
-		temp = "Event Report Version 1.2";
+		temp += "Event Report Version 1.2\n";
 	}
 
 	if (sfm->aaa->a8)
 	{
-		temp = "Message Format Version 1.1";
+		temp += "Message Format Version 1.1\n";
 	}
 
 	if (sfm->aaa->a9)
 	{
-		temp = "MessagesListing Format Version 1.1";
+		temp += "MessagesListing Format Version 1.1\n";
 	}
 
 	if (sfm->aaa->a10)
 	{
-		temp = "Persistent Message Handles";
+		temp += "Persistent Message Handles\n";
 	}
 
 	if (sfm->aaa->a11)
 	{
-		temp = "Database Identifier";
+		temp += "Database Identifier\n";
 	}
 
 	if (sfm->aaa->a12)
 	{
-		temp = "Folder Version Counter";
+		temp += "Folder Version Counter\n";
 	}
 
 	if (sfm->aaa->a13)
 	{
-		temp = "Conversation Version Counters";
+		temp += "Conversation Version Counters\n";
 	}
 
 	if (sfm->aaa->a14)
 	{
-		temp = "Participant Presence Change Notification";
+		temp += "Participant Presence Change Notification\n";
 	}
 
 	if (sfm->aaa->a15)
 	{
-		temp = "Participant Chat State Change Notification";
+		temp += "Participant Chat State Change Notification\n";
 	}
 
 	if (sfm->aaa->a16)
 	{
-		temp = "PBAP Contact Cross Reference";
+		temp += "PBAP Contact Cross Reference\n";
 	}
 
 	if (sfm->aaa->a17)
 	{
-		temp = "Notification Filtering";
+		temp += "Notification Filtering\n";
 	}
 
 	if (sfm->aaa->a18)
 	{
-		temp = "UTC Offset Timestamp Format";
+		temp += "UTC Offset Timestamp Format\n";
 	}
 
 	if (sfm->aaa->a19)
 	{
-		temp = "MapSupportedFeatures in Connect Request";
+		temp += "MapSupportedFeatures in Connect Request\n";
 	}
 
 	if (sfm->aaa->a20)
 	{
-		temp = "Conversation listing";
+		temp += "Conversation listing\n";
 	}
 
 	if (sfm->aaa->a21)
 	{
-		temp = "Owner Status";
+		temp += "Owner Status\n";
 	}
 
 	if (sfm->aaa->a22)
 	{
-		temp = "Message Forwarding";
+		temp += "Message Forwarding\n";
 	}
 
 	return temp;
@@ -1282,22 +1282,9 @@ int SDP::MAP::getAndParse_SUPPORTED_MESSAGE_TYPES_MAP(ULONG recordHandle, HANDLE
 
 		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::MAP::SUPPORTED_MESSAGE_TYPES*, BYTE[]>(supported_message_types_handle, bssr_response, 5000, position);
 
-		// TODO: prevedi pomen vrednosti
-
 		supported_message_types_handle->VALUE.sfm = new SUPPORTED_FEATURES_MESSAGES_S(supported_message_types_handle->VALUE.value);
-		printf("0x%02X - 0x%02X - 0x%02X - 0x%02X - 0x%02X\n",
-			supported_message_types_handle->VALUE.sfm->ttt->a0,
-			supported_message_types_handle->VALUE.sfm->ttt->a1,
-			supported_message_types_handle->VALUE.sfm->ttt->a2,
-			supported_message_types_handle->VALUE.sfm->ttt->a3,
-			supported_message_types_handle->VALUE.sfm->ttt->a4
-		);
-
-
 
 		supported_message_types_handle->print();
-
-
 
 		return 1;
 	}
@@ -1360,8 +1347,6 @@ int SDP::MAP::getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_
 
 		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::MAP::MAP_SUPPORTED_FEATURES*, BYTE[]>(map_supported_features_handle, bssr_response, 5000, position);
 
-		// TODO: prevedi pomen vrednosti
-
 		DWORD temp = 0x00;
 
 		temp |= map_supported_features_handle->VALUE.value[0];
@@ -1374,25 +1359,7 @@ int SDP::MAP::getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_
 
 		map_supported_features_handle->VALUE.sfm = new SUPPORTED_FEATURES_MESSAGES_S(&temp);
 
-		printf("0x%02X - 0x%02X - 0x%02X - 0x%02X - 0x%02X - 0x%02X - 0x%02X - 0x%02X - 0x%02X\n",
-			map_supported_features_handle->VALUE.sfm->aaa->a0,
-			map_supported_features_handle->VALUE.sfm->aaa->a1,
-			map_supported_features_handle->VALUE.sfm->aaa->a2,
-			map_supported_features_handle->VALUE.sfm->aaa->a3,
-			map_supported_features_handle->VALUE.sfm->aaa->a4,
-			map_supported_features_handle->VALUE.sfm->aaa->a5,
-			map_supported_features_handle->VALUE.sfm->aaa->a6,
-			map_supported_features_handle->VALUE.sfm->aaa->a7,
-			map_supported_features_handle->VALUE.sfm->aaa->a8
-		);
-
-
-
-
-
 		map_supported_features_handle->print();
-
-
 
 		return 1;
 	}
@@ -1402,7 +1369,8 @@ int SDP::MAP::getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_
 
 
 
-
+/*********************************************************************************************************************/
+/* PBAP SPECIFIC */
 
 
 

@@ -1194,6 +1194,7 @@ namespace SDP
 					printf("\n");
 				}
 
+				printf("Message types: \n%s\n", getMessageTypesString(VALUE.sfm).c_str());
 			}
 
 
@@ -1311,7 +1312,7 @@ namespace SDP
 					printf("\n");
 				}
 
-				
+				printf("Features: \n%s\n", getSupportedFeaturesString(VALUE.sfm).c_str());
 
 
 			}
@@ -1324,10 +1325,32 @@ namespace SDP
 		int getAndParse_SUPPORTED_MESSAGE_TYPES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_MAS_INSTANCE_ID_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+	};
+
+	namespace PBAP
+	{
+		typedef enum
+		{
+			GoepL2capPsm = 0x0200,
+			SupportedRepositories = 0x0314,
+			PbapSupportedFeatures = 0x0317
+
+		} ATTRIBUTE_ID_PBAP;
+
+
+
+
+
+
+
 
 
 
 	};
+
+
+
+
 };
 
 /*
