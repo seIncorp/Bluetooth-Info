@@ -1338,8 +1338,130 @@ namespace SDP
 		} ATTRIBUTE_ID_PBAP;
 
 
+		typedef struct SUPPORTED_REPOSITORIES_S
+		{
+			ATTR_ID* attr_id;
+
+			struct VV : VALUE
+			{
+				
+
+			} VALUE;
+
+			void print()
+			{
+				printf("ATTRIBUTE ID:\n");
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+
+				if (attr_id->additional_bits_flag)
+				{
+					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
+				}
+				else
+				{
+					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
+
+					printf("Value: 0x");
+					for (int a = 0; a < attr_id->size_bytes; a++)
+						printf("%02X", attr_id->value[a]);
+					printf("\n");
+				}
+
+				printf("VALUE ELEMENT:\n");
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
+				if (VALUE.additional_bits_flag)
+				{
+					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
+					if (VALUE.additional_bits_for_size == 1)
+					{
+						printf("Data size: %d\n", VALUE.size_bytes);
+
+						printf("Value: ");
+						for (int a = 0; a < VALUE.size_bytes; a++)
+							printf("%02X", VALUE.value[a]);
+						printf("\n");
+					}
+				}
+				else
+				{
+					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
+
+					printf("Value: 0x");
+					for (int a = 0; a < VALUE.size_bytes; a++)
+						printf("%02X", VALUE.value[a]);
+					printf("\n");
+				}
+
+				
+			}
 
 
+		} SUPPORTED_REPOSITORIES, * PSUPPORTED_REPOSITORIES;
+
+		typedef struct PBAP_SUPPORTED_FEATURES_S
+		{
+			ATTR_ID* attr_id;
+
+			struct VV : VALUE
+			{
+
+
+			} VALUE;
+
+			void print()
+			{
+				printf("ATTRIBUTE ID:\n");
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+
+				if (attr_id->additional_bits_flag)
+				{
+					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
+				}
+				else
+				{
+					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
+
+					printf("Value: 0x");
+					for (int a = 0; a < attr_id->size_bytes; a++)
+						printf("%02X", attr_id->value[a]);
+					printf("\n");
+				}
+
+				printf("VALUE ELEMENT:\n");
+				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
+				if (VALUE.additional_bits_flag)
+				{
+					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
+					if (VALUE.additional_bits_for_size == 1)
+					{
+						printf("Data size: %d\n", VALUE.size_bytes);
+
+						printf("Value: ");
+						for (int a = 0; a < VALUE.size_bytes; a++)
+							printf("%02X", VALUE.value[a]);
+						printf("\n");
+					}
+				}
+				else
+				{
+					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
+
+					printf("Value: 0x");
+					for (int a = 0; a < VALUE.size_bytes; a++)
+						printf("%02X", VALUE.value[a]);
+					printf("\n");
+				}
+
+
+			}
+
+
+		} PBAP_SUPPORTED_FEATURES, * PPBAP_SUPPORTED_FEATURES;
+
+		// GoepL2CapPsm use from MAP
+
+		int getAndParse_SUPPORTED_REPOSITORIES_PBAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		int getAndParse_PBAP_SUPPORTED_FEATURES_PBAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 
 
 
