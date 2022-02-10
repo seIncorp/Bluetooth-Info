@@ -2,6 +2,7 @@
 
 
 
+
 namespace SDP
 {
 	typedef enum
@@ -223,7 +224,17 @@ namespace SDP
 	} VALUE;
 
 
+	typedef struct DEVICE_DATA_SDP_S
+	{
+		//char* address;
+		BTH_ADDR* btaddr;
 
+		BTH_SDP_CONNECT* bsc;
+
+
+	} DEVICE_DATA_SDP, *PDEVICE_DATA_SDP;
+
+	
 };
 
 

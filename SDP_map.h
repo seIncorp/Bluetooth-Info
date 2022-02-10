@@ -164,6 +164,8 @@ namespace SDP
 		int getAndParse_SUPPORTED_MESSAGE_TYPES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_MAS_INSTANCE_ID_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+
+		int getAllFeatures_data_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 	};
 
 };

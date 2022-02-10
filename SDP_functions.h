@@ -10,6 +10,14 @@ namespace SDP
 		std::string getProtocolTypeString(SHORT type);
 		std::string getNetworkPacketTypeString(SHORT type);
 
+
+		/* SET, CONNECT, DISCONNECT FROM SDP DEVICE */
+		void init_for_IOCTL_BTH_SDP_CONNECT(char add[], DEVICE_DATA_SDP* device_data_sdp);
+		void call_IOCTL_BTH_SDP_CONNECT(DEVICE_DATA_SDP* device_data_sdp);
+		void call_IOCTL_BTH_SDP_SERVICE_SEARCH();
+
+
+
 		BOOL call_IOCTL_BTH_SDP_ATTRIBUTE_SEARCH(BTH_SDP_ATTRIBUTE_SEARCH_REQUEST* bsasr, BYTE bssr_response[], int res_length);
 		BOOL set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(ULONG recordHandle, HANDLE_SDP_TYPE aa, USHORT minAttr, USHORT maxAttr, BYTE res[], int res_length);
 

@@ -210,6 +210,45 @@ std::string SDP::FUNCTIONS::getNetworkPacketTypeString(SHORT type)
 }
 
 
+void SDP::FUNCTIONS::init_for_IOCTL_BTH_SDP_CONNECT(char add[], DEVICE_DATA_SDP* device_data_sdp)
+{
+	device_data_sdp->btaddr = new BTH_ADDR();
+
+	if (IOCTL_S::str2ba(add, device_data_sdp->btaddr) == 1)
+		printf("str2ba ERROR\n");
+	device_data_sdp->bsc = new BTH_SDP_CONNECT();
+
+	device_data_sdp->bsc->bthAddress = *(device_data_sdp->btaddr);
+
+}
+
+void SDP::FUNCTIONS::call_IOCTL_BTH_SDP_CONNECT(DEVICE_DATA_SDP* device_data_sdp)
+{
+	dd.bResult = DeviceIoControl(
+		dd.hDevice, // device to be queried
+		IOCTL_BTH_SDP_CONNECT, // operation to perform
+
+		device_data_sdp->bsc, sizeof(*device_data_sdp->bsc),                       // no input buffer
+
+		device_data_sdp->bsc, sizeof(*device_data_sdp->bsc),             // output buffer
+
+		&dd.junk,                         // # bytes returned
+		(LPOVERLAPPED)NULL);          // synchronous I/O
+
+	DWORD err = GetLastError();
+	printErrorMessage(err);
+	//
+	printf("-- %d\n", dd.junk);
+	
+}
+
+void SDP::FUNCTIONS::call_IOCTL_BTH_SDP_SERVICE_SEARCH()
+{
+
+
+}
+
+
 BOOL SDP::FUNCTIONS::call_IOCTL_BTH_SDP_ATTRIBUTE_SEARCH(BTH_SDP_ATTRIBUTE_SEARCH_REQUEST* bsasr, BYTE bssr_response[], int res_length)
 {
 	BOOL test_sdp_call_222;

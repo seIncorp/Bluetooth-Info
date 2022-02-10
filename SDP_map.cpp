@@ -304,3 +304,16 @@ int SDP::MAP::getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_
 
 	return 0;
 }
+
+
+int SDP::MAP::getAllFeatures_data_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+{
+	printf("\n\n*** getAllFeatures_data_MAP ***\n");
+
+	// trenutno so samo klici na posamezni attribut ko je service klican
+
+
+
+
+	return 1;
+}
