@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+
+
 namespace SDP
 {
 	typedef enum
@@ -123,7 +125,8 @@ namespace SDP
 		IconURL								= 0x000C,
 		AdditionalProtocolDescriptorList	= 0x000D,
 		ServiceName							= 0x0100,
-		ServiceDescription					= 0x0101
+		ServiceDescription					= 0x0101,
+		ProviderName						= 0x0102
 
 	} ATTRIBUTE_ID;
 
@@ -230,12 +233,13 @@ namespace SDP
 		BOOL call_IOCTL_BTH_SDP_ATTRIBUTE_SEARCH(BTH_SDP_ATTRIBUTE_SEARCH_REQUEST* bsasr, BYTE bssr_response[], int res_length);
 		BOOL set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(ULONG recordHandle, HANDLE_SDP_TYPE aa, USHORT minAttr, USHORT maxAttr, BYTE res[], int res_length);
 
-		void printResponse( BYTE bssr_response[]);
+		void printResponse(BYTE bssr_response[]);
 
 		int getAndParse_SERVICE_RECORD_HANDLE(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_SERVICE_NAME(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		int getAndParse_PROVIDER_NAME(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_BLUETOOTH_PROFILE_DESCRIPTOR_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_LANGUAGE_BASE_ATTRIBUTE_ID_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_SERVICE_AVAILABILITY(ULONG recordHandle, HANDLE_SDP_TYPE aa);
@@ -246,28 +250,27 @@ namespace SDP
 
 		template<class A, class B>
 		int set_save_VALUE_ELEMENT(A id_handle, B res, int res_length, int position);
-
 	};
 
-	typedef struct SERVICE_RECORD_HANDLE_S
+
+	typedef struct DEFAULT_OBJECT_S
 	{
 		ATTR_ID* attr_id;
 
 		struct VV : VALUE
 		{
 
+
 		} VALUE;
 
-
-		void print()
+		void printATTR_ELEMENT()
 		{
 			printf("ATTRIBUTE ID:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+			printf("Type: %s [%d]\n", SDP::FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
 
 			if (attr_id->additional_bits_flag)
 			{
 				printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-
 			}
 			else
 			{
@@ -278,37 +281,49 @@ namespace SDP
 					printf("%02X", attr_id->value[a]);
 				printf("\n");
 			}
+		}
 
+		template<class T>
+		void printVALUE_ELEMENT(T v)
+		{
 			printf("VALUE ELEMENT:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-			if (VALUE.additional_bits_flag)
+			printf("Type: %s [%d]\n", SDP::FUNCTIONS::getElementTypeString(v.element->element.type).c_str(), v.element->element.type);
+			if (v.additional_bits_flag)
 			{
-				printf("Additional size: %d\n", VALUE.additional_bits_for_size);
+				printf("Additional size: %d\n", v.additional_bits_for_size);
+				if (v.additional_bits_for_size == 1)
+				{
+					printf("Data size: %d\n", v.size_bytes);
 
+					printf("Value: ");
+					for (int a = 0; a < v.size_bytes; a++)
+						printf("0x%02X ", v.value[a]);
+					printf("\n");
+				}
 			}
 			else
 			{
-				printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
+				printf("Size: %d Bytes [%d]\n", v.size_bytes, v.size_bytes);
 
 				printf("Value: 0x");
-				for (int a = 0; a < VALUE.size_bytes; a++)
-					printf("%02X", VALUE.value[a]);
+				for (int a = 0; a < v.size_bytes; a++)
+					printf("%02X", v.value[a]);
 				printf("\n");
 			}
+		}
+		template<class T>
+		void print(T v)
+		{
+			printATTR_ELEMENT();
 
+			printVALUE_ELEMENT(v);
 
-
-			printf("\n");
-			printf("\n");
-			printf("\n");
 		}
 
-	} SERVICE_RECORD_HANDLE, * PSERVICE_RECORD_HANDLE;
+	} DEFAULT_OBJECT, * PDEFAULT_OBJECT;
 
-	typedef struct SERVICE_CLASS_ID_LIST_S
+	typedef struct SERVICE_CLASS_ID_LIST_S : DEFAULT_OBJECT
 	{
-		ATTR_ID* attr_id;
-
 		struct VV : VALUE
 		{
 
@@ -316,73 +331,24 @@ namespace SDP
 			SERVICE_CLASS* classes;				// pointer to array of SERVICE_CLASS objects
 		} VALUE;
 
-
-		void print()
+		template<class T>
+		void print(T v)
 		{
-			printf("ATTRIBUTE ID:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+			printATTR_ELEMENT();
 
-			if (attr_id->additional_bits_flag)
-			{
-				printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-
-			}
-			else
-			{
-				printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
-
-				printf("Value: 0x");
-				for (int a = 0; a < attr_id->size_bytes; a++)
-					printf("%02X", attr_id->value[a]);
-				printf("\n");
-			}
-
-			printf("VALUE ELEMENT:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-			if (VALUE.additional_bits_flag)
-			{
-				printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-				if (VALUE.additional_bits_for_size == 1)
-				{
-					printf("Data size: %d\n", VALUE.size_bytes);
-
-					printf("Value: ");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("0x%02X ", VALUE.value[a]);
-					printf("\n");
-
-				}
-			}
-			else
-			{
-				printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-				printf("Value: 0x");
-				for (int a = 0; a < VALUE.size_bytes; a++)
-					printf("%02X", VALUE.value[a]);
-				printf("\n");
-			}
-
+			printVALUE_ELEMENT(v);
 
 			// TODO: naredi tako da se bodo kreirali objekt za vsak class posebej, ker jih je v prihodnosti lahko vec
-			//printf("CLASS 0: 0x%02X%02X\n", VALUE.value[1], VALUE.value[2]);
-			//printf("CLASS 1: 0x%02X%02X\n", VALUE.value[4], VALUE.value[5]);
 
 			for (int a = 0; a < VALUE.num_classes; a++)
 				printf("Class ID [%d]: 0x%04X\n", a, VALUE.classes[a].value);
 
-
-			printf("\n");
-			printf("\n");
-			printf("\n");
 		}
 
 	} SERVICE_CLASS_ID_LIST, * PSERVICE_CLASS_ID_LIST;
 
-	typedef struct PROTOCOL_DESCRIPTOR_LIST_S
+	typedef struct PROTOCOL_DESCRIPTOR_LIST_S : DEFAULT_OBJECT
 	{
-		ATTR_ID* attr_id;
-
 		struct VV : VALUE
 		{
 			int num_protocols;
@@ -390,60 +356,19 @@ namespace SDP
 			PROTOCOL_DESCRIPTOR* protocols;
 
 			int _BNEP_flag;
-			
+
 		} VALUE;
 
-
-		void print()
+		template<class T>
+		void print(T v)
 		{
-			printf("ATTRIBUTE ID:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+			printATTR_ELEMENT();
 
-			if (attr_id->additional_bits_flag)
-			{
-				printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-
-			}
-			else
-			{
-				printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
-
-				printf("Value: 0x");
-				for (int a = 0; a < attr_id->size_bytes; a++)
-					printf("%02X", attr_id->value[a]);
-				printf("\n");
-			}
-
-
-			printf("VALUE ELEMENT:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-			if (VALUE.additional_bits_flag)
-			{
-				printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-				if (VALUE.additional_bits_for_size == 1)
-				{
-					printf("Data size: %d\n", VALUE.size_bytes);
-
-					printf("Value: ");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("0x%02X ", VALUE.value[a]);
-					printf("\n");
-
-				}
-			}
-			else
-			{
-				printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-				printf("Value: 0x");
-				for (int a = 0; a < VALUE.size_bytes; a++)
-					printf("%02X", VALUE.value[a]);
-				printf("\n");
-			}
+			printVALUE_ELEMENT(v);
 
 			for (int c = 0; c < VALUE.num_protocols; c++)
 			{
-				if (VALUE._BNEP_flag == 1 && c < (VALUE.num_protocols -1))
+				if (VALUE._BNEP_flag == 1 && c < (VALUE.num_protocols - 1))
 				{
 					/* za vse protokole ki so BNEP  */
 					printf("Protocol [%d]:\n", c);
@@ -504,7 +429,7 @@ namespace SDP
 				else if (VALUE._BNEP_flag != 1)
 				{
 					/* za vse protokole ki niso BNEP */
-					
+
 					printf("Protocol [%d]:\n", c);
 
 					printf("\tValue: ");
@@ -550,71 +475,54 @@ namespace SDP
 					}
 				}
 			}
-			printf("\n");
 
+			printf("\n");
 		}
 
 	} PROTOCOL_DESCRIPTOR_LIST, * PPROTOCOL_DESCRIPTOR_LIST;
 
-	typedef struct SERVICE_NAME_S
+	typedef struct SERVICE_NAME_S : DEFAULT_OBJECT
 	{
-		ATTR_ID* attr_id;
-
 		struct VV : VALUE
-		{} VALUE;
-
-
-		void print()
 		{
-			printf("ATTRIBUTE ID:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+			char* service_name;
 
-			if (attr_id->additional_bits_flag)
-			{
-				printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-			}
-			else
-			{
-				printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
+		} VALUE;
 
-				printf("Value: 0x");
-				for (int a = 0; a < attr_id->size_bytes; a++)
-					printf("%02X", attr_id->value[a]);
-				printf("\n");
-			}
+		template<class T>
+		void print(T v)
+		{
+			printATTR_ELEMENT();
 
-			printf("VALUE ELEMENT:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-			if (VALUE.additional_bits_flag)
-			{
-				printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-				if (VALUE.additional_bits_for_size == 1)
-				{
-					printf("Data size: %d\n", VALUE.size_bytes);
+			printVALUE_ELEMENT(v);
 
-					printf("Value: ");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("%c", VALUE.value[a]);
-					printf("\n");
-				}
-			}
-			else
-			{
-				printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-				printf("Value: 0x");
-				for (int a = 0; a < VALUE.size_bytes; a++)
-					printf("%02X", VALUE.value[a]);
-				printf("\n");
-			}
+			printf("Service name: %s\n", v.service_name);
 		}
 
-	} SERVICE_NAME, *PSERVICE_NAME;
-	
-	typedef struct BLUETOOTH_PROFILE_DESCRIPTOR_LIST_S
-	{
-		ATTR_ID* attr_id;
+	} SERVICE_NAME, * PSERVICE_NAME;
 
+	typedef struct PROVIDER_NAME_S : DEFAULT_OBJECT
+	{
+		struct VV : VALUE
+		{
+			char* provider_name;
+
+		} VALUE;
+
+		template<class T>
+		void print(T v)
+		{
+			printATTR_ELEMENT();
+
+			printVALUE_ELEMENT(v);
+
+			printf("Provider name: %s\n", v.provider_name);
+		}
+
+	} PROVIDER_NAME, * PPROVIDER_NAME;
+
+	typedef struct BLUETOOTH_PROFILE_DESCRIPTOR_LIST_S : DEFAULT_OBJECT
+	{
 		struct VV : VALUE
 		{
 			/* PROFILES */
@@ -627,63 +535,21 @@ namespace SDP
 			//BLUETOOTH_PROFILE* pProfile_list;
 		} VALUE;
 
-		void print()
+		template<class T>
+		void print(T v)
 		{
-			printf("ATTRIBUTE ID:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+			printATTR_ELEMENT();
 
-			if (attr_id->additional_bits_flag)
-			{
-				printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-			}
-			else
-			{
-				printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
-
-				printf("Value: 0x");
-				for (int a = 0; a < attr_id->size_bytes; a++)
-					printf("%02X", attr_id->value[a]);
-				printf("\n");
-			}
-
-			printf("VALUE ELEMENT:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-			if (VALUE.additional_bits_flag)
-			{
-				printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-				if (VALUE.additional_bits_for_size == 1)
-				{
-					printf("Data size: %d\n", VALUE.size_bytes);
-
-					printf("Value: ");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("0x%02X ", VALUE.value[a]);
-					printf("\n");
-				}
-			}
-			else
-			{
-				printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-				printf("Value: 0x");
-				for (int a = 0; a < VALUE.size_bytes; a++)
-					printf("%02X", VALUE.value[a]);
-				printf("\n");
-			}
+			printVALUE_ELEMENT(v);
 
 			printf("Profile UUID: 0x%04X\n", VALUE.profile_UUID);
 			printf("Profile version: 0x%04X\n", VALUE.profile_version);
-
-
 		}
 
+	} BLUETOOTH_PROFILE_DESCRIPTOR_LIST, * PBLUETOOTH_PROFILE_DESCRIPTOR_LIST;
 
-	} BLUETOOTH_PROFILE_DESCRIPTOR_LIST, *PBLUETOOTH_PROFILE_DESCRIPTOR_LIST;
-
-	typedef struct LANGUAGE_BASE_ATTRIBUTE_ID_LIST_S
+	typedef struct LANGUAGE_BASE_ATTRIBUTE_ID_LIST_S : DEFAULT_OBJECT
 	{
-		ATTR_ID* attr_id;
-
 		struct VV : VALUE
 		{
 			// TODO: naredi ce je teh tripletov vec kot eden (trenutno je narejeno samo za enega)
@@ -693,329 +559,132 @@ namespace SDP
 			SHORT triplet_attribute_id;
 		} VALUE;
 
-		void print()
+		template<class T>
+		void print(T v)
 		{
-			printf("ATTRIBUTE ID:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+			printATTR_ELEMENT();
 
-			if (attr_id->additional_bits_flag)
-			{
-				printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-			}
-			else
-			{
-				printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
-
-				printf("Value: 0x");
-				for (int a = 0; a < attr_id->size_bytes; a++)
-					printf("%02X", attr_id->value[a]);
-				printf("\n");
-			}
-
-			printf("VALUE ELEMENT:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-			if (VALUE.additional_bits_flag)
-			{
-				printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-				if (VALUE.additional_bits_for_size == 1)
-				{
-					printf("Data size: %d\n", VALUE.size_bytes);
-
-					printf("Value: ");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("0x%02X ", VALUE.value[a]);
-					printf("\n");
-				}
-			}
-			else
-			{
-				printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-				printf("Value: 0x");
-				for (int a = 0; a < VALUE.size_bytes; a++)
-					printf("%02X", VALUE.value[a]);
-				printf("\n");
-			}
+			printVALUE_ELEMENT(v);
 
 			printf("Natural language ID: 0x%04X\n", VALUE.triplet_id_natural_lang);
 			printf("Character encoding ID: 0x%04X\n", VALUE.triplet_id_char_encoding);
 			printf("Attribute ID: 0x%04X\n", VALUE.triplet_attribute_id);
-
 		}
 
+	} LANGUAGE_BASE_ATTRIBUTE_ID_LIST, * PLANGUAGE_BASE_ATTRIBUTE_ID_LIST;
 
-
-	} LANGUAGE_BASE_ATTRIBUTE_ID_LIST, *PLANGUAGE_BASE_ATTRIBUTE_ID_LIST;
-
-	typedef struct SERVICE_DESCRIPTION_S
+	typedef struct SERVICE_DESCRIPTION_S : DEFAULT_OBJECT
 	{
-		ATTR_ID* attr_id;
-
 		struct VV : VALUE
-		{} VALUE;
-
-
-		void print()
 		{
-			printf("ATTRIBUTE ID:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+			char* description;
 
-			if (attr_id->additional_bits_flag)
-			{
-				printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-			}
-			else
-			{
-				printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
+		} VALUE;
 
-				printf("Value: 0x");
-				for (int a = 0; a < attr_id->size_bytes; a++)
-					printf("%02X", attr_id->value[a]);
-				printf("\n");
-			}
+		template<class T>
+		void print(T v)
+		{
+			printATTR_ELEMENT();
 
-			printf("VALUE ELEMENT:\n");
-			printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-			if (VALUE.additional_bits_flag)
-			{
-				printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-				if (VALUE.additional_bits_for_size == 1)
-				{
-					printf("Data size: %d\n", VALUE.size_bytes);
+			printVALUE_ELEMENT(v);
 
-					printf("Value: ");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("%c", VALUE.value[a]);
-					printf("\n");
-				}
-			}
-			else
-			{
-				printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-				printf("Value: 0x");
-				for (int a = 0; a < VALUE.size_bytes; a++)
-					printf("%c", VALUE.value[a]);
-				printf("\n");
-			}
+			printf("Description: %s\n", v.description);
 		}
 
+	} SERVICE_DESCRIPTION, * PSERVICE_DESCRIPTION;
 
 
 
-
-	} SERVICE_DESCRIPTION, *PSERVICE_DESCRIPTION;
-
-	
 	/* USED ONLY IN NAP and PANU */
 	namespace NAP
 	{
 		typedef enum
 		{
-			IpSubnet				= 0x0200,
-			SecurityDescription		= 0x030A,
-			NetAccessType			= 0x030B,
-			MaxNetAccessrate		= 0x030C,
-			IPv4Subnet				= 0x030D,		// TODO:
-			IPv6Subnet				= 0x030E		// TODO:
+			IpSubnet = 0x0200,
+			SecurityDescription = 0x030A,
+			NetAccessType = 0x030B,
+			MaxNetAccessrate = 0x030C,
+			IPv4Subnet = 0x030D,		// TODO:
+			IPv6Subnet = 0x030E		// TODO:
 
 		} ATTRIBUTE_ID_PAN;
 
 		std::string getSecurityDescriptionString(SHORT type);
 		std::string getNetAccessTypeString(SHORT type);
 
-		typedef struct SECURITY_DESCRIPTION_S
+		typedef struct SECURITY_DESCRIPTION_S : DEFAULT_OBJECT
 		{
-			ATTR_ID* attr_id;
-
 			struct VV : VALUE
 			{
 				SHORT security_value;
 			} VALUE;
 
-			void print()
+			template<class T>
+			void print(T v)
 			{
-				printf("ATTRIBUTE ID:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+				printATTR_ELEMENT();
 
-				if (attr_id->additional_bits_flag)
-				{
-					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < attr_id->size_bytes; a++)
-						printf("%02X", attr_id->value[a]);
-					printf("\n");
-				}
-
-				printf("VALUE ELEMENT:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-				if (VALUE.additional_bits_flag)
-				{
-					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-					if (VALUE.additional_bits_for_size == 1)
-					{
-						printf("Data size: %d\n", VALUE.size_bytes);
-
-						printf("Value: ");
-						for (int a = 0; a < VALUE.size_bytes; a++)
-							printf("%02X", VALUE.value[a]);
-						printf("\n");
-					}
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("%02X", VALUE.value[a]);
-					printf("\n");
-				}
+				printVALUE_ELEMENT(v);
 
 				printf("Security Description [0x%04X][%s]\n", VALUE.security_value, getSecurityDescriptionString(VALUE.security_value).c_str());
 
 			}
 
+		} SECURITY_DESCRIPTION, * PSECURITY_DESCRIPTION;
 
-		} SECURITY_DESCRIPTION, *PSECURITY_DESCRIPTION;
-
-		typedef struct NET_ACCESS_TYPE_S
+		typedef struct NET_ACCESS_TYPE_S : DEFAULT_OBJECT
 		{
-			ATTR_ID* attr_id;
-
 			struct VV : VALUE
 			{
 				SHORT NetAccessType;
 			} VALUE;
 
-			void print()
+			template<class T>
+			void print(T v)
 			{
-				printf("ATTRIBUTE ID:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+				printATTR_ELEMENT();
 
-				if (attr_id->additional_bits_flag)
-				{
-					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < attr_id->size_bytes; a++)
-						printf("%02X", attr_id->value[a]);
-					printf("\n");
-				}
-
-				printf("VALUE ELEMENT:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-				if (VALUE.additional_bits_flag)
-				{
-					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-					if (VALUE.additional_bits_for_size == 1)
-					{
-						printf("Data size: %d\n", VALUE.size_bytes);
-
-						printf("Value: ");
-						for (int a = 0; a < VALUE.size_bytes; a++)
-							printf("%02X", VALUE.value[a]);
-						printf("\n");
-					}
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("%02X", VALUE.value[a]);
-					printf("\n");
-				}
+				printVALUE_ELEMENT(v);
 
 				printf("Type of Network Access Available[0x%04X][%s]\n", VALUE.NetAccessType, getNetAccessTypeString(VALUE.NetAccessType).c_str());
 			}
 
-		} NET_ACCESS_TYPE, *PNET_ACCESS_TYPE;
-		
-		typedef struct MAX_NET_ACCESS_RATE_S
-		{
-			ATTR_ID* attr_id;
+		} NET_ACCESS_TYPE, * PNET_ACCESS_TYPE;
 
+		typedef struct MAX_NET_ACCESS_RATE_S : DEFAULT_OBJECT
+		{
 			struct VV : VALUE
 			{
 				DWORD Maximum_possible_Network_Access_Data_Rate;
 			} VALUE;
 
-			void print()
+			template<class T>
+			void print(T v)
 			{
-				printf("ATTRIBUTE ID:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+				printATTR_ELEMENT();
 
-				if (attr_id->additional_bits_flag)
-				{
-					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
+				printVALUE_ELEMENT(v);
 
-					printf("Value: 0x");
-					for (int a = 0; a < attr_id->size_bytes; a++)
-						printf("%02X", attr_id->value[a]);
-					printf("\n");
-				}
-
-				printf("VALUE ELEMENT:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-				if (VALUE.additional_bits_flag)
-				{
-					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-					if (VALUE.additional_bits_for_size == 1)
-					{
-						printf("Data size: %d\n", VALUE.size_bytes);
-
-						printf("Value: ");
-						for (int a = 0; a < VALUE.size_bytes; a++)
-							printf("%02X", VALUE.value[a]);
-						printf("\n");
-					}
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("%02X", VALUE.value[a]);
-					printf("\n");
-				}
-
-				printf("Maximum possible Network Access Data Rate: 0x%08X\n",VALUE.Maximum_possible_Network_Access_Data_Rate);
+				printf("Maximum possible Network Access Data Rate: 0x%08X\n", VALUE.Maximum_possible_Network_Access_Data_Rate);
 			}
 
-		} MAX_NET_ACCESS_RATE, *PMAX_NET_ACCESS_RATE;
+		} MAX_NET_ACCESS_RATE, * PMAX_NET_ACCESS_RATE;
 
 
 		int getAndParse_SECURITY_DESCRIPTION_PAN(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_NET_ACCESS_TYPE_PAN(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_MAX_NET_ACCESS_RATE_PAN(ULONG recordHandle, HANDLE_SDP_TYPE aa);
-
-
 	};
-	
+
+
 	namespace MAP
 	{
 		typedef enum
 		{
-			GoepL2capPsm			= 0x0200,
-			MASInstanceID			= 0x0315,
-			SupportedMessageTypes	= 0x0316,
-			MapSupportedFeatures	= 0x0317
+			GoepL2capPsm = 0x0200,
+			MASInstanceID = 0x0315,
+			SupportedMessageTypes = 0x0316,
+			MapSupportedFeatures = 0x0317
 
 		} ATTRIBUTE_ID_MAP;
 
@@ -1064,8 +733,8 @@ namespace SDP
 			};
 
 			SF_S* aaa;
-			
-			SUPPORTED_FEATURES_MESSAGES_S(BYTE *a) : ttt((SMT_S*)a)
+
+			SUPPORTED_FEATURES_MESSAGES_S(BYTE* a) : ttt((SMT_S*)a)
 			{
 				//printf("FROM STRUCT --> %X\n", *a);
 			};
@@ -1074,125 +743,49 @@ namespace SDP
 			{
 				//printf("FROM STRUCT --> %X\n", *a);
 			};
-			
-			
-		} ;
+
+
+		};
 
 		std::string getMessageTypesString(SUPPORTED_FEATURES_MESSAGES_S* sfm);
 		std::string getSupportedFeaturesString(SUPPORTED_FEATURES_MESSAGES_S* sfm);
 
 
-		typedef struct GOEPL2CAPPSM_S
+		typedef struct GOEPL2CAPPSM_S : DEFAULT_OBJECT
 		{
-			ATTR_ID* attr_id;
-
 			struct VV : VALUE
 			{
-				
+				SHORT GoepL2CapPsm_value;
+
 			} VALUE;
 
-			void print()
+			template<class T>
+			void print(T v)
 			{
-				printf("ATTRIBUTE ID:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+				printATTR_ELEMENT();
 
-				if (attr_id->additional_bits_flag)
-				{
-					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
+				printVALUE_ELEMENT(v);
 
-					printf("Value: 0x");
-					for (int a = 0; a < attr_id->size_bytes; a++)
-						printf("%02X", attr_id->value[a]);
-					printf("\n");
-				}
-
-				printf("VALUE ELEMENT:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-				if (VALUE.additional_bits_flag)
-				{
-					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-					if (VALUE.additional_bits_for_size == 1)
-					{
-						printf("Data size: %d\n", VALUE.size_bytes);
-
-						printf("Value: ");
-						for (int a = 0; a < VALUE.size_bytes; a++)
-							printf("%02X", VALUE.value[a]);
-						printf("\n");
-					}
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("%02X", VALUE.value[a]);
-					printf("\n");
-				}
-
+				printf("GoepL2CapPsm value: 0x%04X\n", v.GoepL2CapPsm_value);
 			}
 
 
 		} GOEPL2CAPPSM, * PGOEPL2CAPPSM;
 
-		typedef struct SUPPORTED_MESSAGE_TYPES_S
+		typedef struct SUPPORTED_MESSAGE_TYPES_S : DEFAULT_OBJECT
 		{
-			ATTR_ID* attr_id;
-
 			struct VV : VALUE
 			{
 				SUPPORTED_FEATURES_MESSAGES_S* sfm;
 
 			} VALUE;
 
-			void print()
+			template<class T>
+			void print(T v)
 			{
-				printf("ATTRIBUTE ID:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+				printATTR_ELEMENT();
 
-				if (attr_id->additional_bits_flag)
-				{
-					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < attr_id->size_bytes; a++)
-						printf("%02X", attr_id->value[a]);
-					printf("\n");
-				}
-
-				printf("VALUE ELEMENT:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-				if (VALUE.additional_bits_flag)
-				{
-					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-					if (VALUE.additional_bits_for_size == 1)
-					{
-						printf("Data size: %d\n", VALUE.size_bytes);
-
-						printf("Value: ");
-						for (int a = 0; a < VALUE.size_bytes; a++)
-							printf("%02X", VALUE.value[a]);
-						printf("\n");
-					}
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("%02X", VALUE.value[a]);
-					printf("\n");
-				}
+				printVALUE_ELEMENT(v);
 
 				printf("Message types: \n%s\n", getMessageTypesString(VALUE.sfm).c_str());
 			}
@@ -1200,123 +793,43 @@ namespace SDP
 
 		} SUPPORTED_MESSAGE_TYPES, * PSUPPORTED_MESSAGE_TYPES;
 
-		typedef struct MAS_INSTANCE_ID_S
+		typedef struct MAS_INSTANCE_ID_S : DEFAULT_OBJECT
 		{
-			ATTR_ID* attr_id;
-
 			struct VV : VALUE
 			{
+				BYTE instance_ID;
 
 			} VALUE;
 
-			void print()
+			template<class T>
+			void print(T v)
 			{
-				printf("ATTRIBUTE ID:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+				printATTR_ELEMENT();
 
-				if (attr_id->additional_bits_flag)
-				{
-					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
+				printVALUE_ELEMENT(v);
 
-					printf("Value: 0x");
-					for (int a = 0; a < attr_id->size_bytes; a++)
-						printf("%02X", attr_id->value[a]);
-					printf("\n");
-				}
-
-				printf("VALUE ELEMENT:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-				if (VALUE.additional_bits_flag)
-				{
-					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-					if (VALUE.additional_bits_for_size == 1)
-					{
-						printf("Data size: %d\n", VALUE.size_bytes);
-
-						printf("Value: ");
-						for (int a = 0; a < VALUE.size_bytes; a++)
-							printf("%02X", VALUE.value[a]);
-						printf("\n");
-					}
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("%02X", VALUE.value[a]);
-					printf("\n");
-				}
-
+				printf("MAS instance ID: 0x%02X\n", v.instance_ID);
 			}
-
 
 		} MAS_INSTANCE_ID, * PMAS_INSTANCE_ID;
 
-		typedef struct MAP_SUPPORTED_FEATURES_S
+		typedef struct MAP_SUPPORTED_FEATURES_S : DEFAULT_OBJECT
 		{
-			ATTR_ID* attr_id;
-
 			struct VV : VALUE
 			{
 				SUPPORTED_FEATURES_MESSAGES_S* sfm;
 
 			} VALUE;
 
-			void print()
+			template<class T>
+			void print(T v)
 			{
-				printf("ATTRIBUTE ID:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+				printATTR_ELEMENT();
 
-				if (attr_id->additional_bits_flag)
-				{
-					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
+				printVALUE_ELEMENT(v);
 
-					printf("Value: 0x");
-					for (int a = 0; a < attr_id->size_bytes; a++)
-						printf("%02X", attr_id->value[a]);
-					printf("\n");
-				}
-
-				printf("VALUE ELEMENT:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-				if (VALUE.additional_bits_flag)
-				{
-					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-					if (VALUE.additional_bits_for_size == 1)
-					{
-						printf("Data size: %d\n", VALUE.size_bytes);
-
-						printf("Value: ");
-						for (int a = 0; a < VALUE.size_bytes; a++)
-							printf("%02X", VALUE.value[a]);
-						printf("\n");
-					}
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("%02X", VALUE.value[a]);
-					printf("\n");
-				}
-
-				printf("Features: \n%s\n", getSupportedFeaturesString(VALUE.sfm).c_str());
-
-
+				printf("Features: \n%s\n", getSupportedFeaturesString(v.sfm).c_str());
 			}
-
 
 		} MAP_SUPPORTED_FEATURES, * PMAP_SUPPORTED_FEATURES;
 
@@ -1326,6 +839,7 @@ namespace SDP
 		int getAndParse_MAS_INSTANCE_ID_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 	};
+
 
 	namespace PBAP
 	{
@@ -1337,122 +851,82 @@ namespace SDP
 
 		} ATTRIBUTE_ID_PBAP;
 
-
-		typedef struct SUPPORTED_REPOSITORIES_S
+		struct SUPPORTED_REPOSITORIES_DATA_S
 		{
-			ATTR_ID* attr_id;
+			struct SR_S
+			{
+				BYTE a0 : 1;
+				BYTE a1 : 1;
+				BYTE a2 : 1;
+				BYTE a3 : 1;
+				BYTE : 4;
+			};
 
+			SR_S* repo;
+
+			SUPPORTED_REPOSITORIES_DATA_S(BYTE* a) : repo((SR_S*)a)
+			{
+				printf("FROM STRUCT --> %X\n", *a);
+			};
+
+			std::string getSupportedRepositoriesString()
+			{
+				std::string temp = "";
+
+				if (repo->a0)
+				{
+					temp += "Local Phonebook\n";
+				}
+
+				if (repo->a1)
+				{
+					temp += "SIM card\n";
+				}
+
+				if (repo->a2)
+				{
+					temp += "Speed dial\n";
+				}
+
+				if (repo->a3)
+				{
+					temp += "Favorites\n";
+				}
+
+				return temp;
+			}
+		};
+
+
+		typedef struct SUPPORTED_REPOSITORIES_S : DEFAULT_OBJECT
+		{
 			struct VV : VALUE
 			{
-				
+				SUPPORTED_REPOSITORIES_DATA_S* srs;
 
 			} VALUE;
 
-			void print()
+			template<class T>
+			void print(T v)
 			{
-				printf("ATTRIBUTE ID:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
+				printATTR_ELEMENT();
 
-				if (attr_id->additional_bits_flag)
-				{
-					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
+				printVALUE_ELEMENT(v);
 
-					printf("Value: 0x");
-					for (int a = 0; a < attr_id->size_bytes; a++)
-						printf("%02X", attr_id->value[a]);
-					printf("\n");
-				}
-
-				printf("VALUE ELEMENT:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-				if (VALUE.additional_bits_flag)
-				{
-					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-					if (VALUE.additional_bits_for_size == 1)
-					{
-						printf("Data size: %d\n", VALUE.size_bytes);
-
-						printf("Value: ");
-						for (int a = 0; a < VALUE.size_bytes; a++)
-							printf("%02X", VALUE.value[a]);
-						printf("\n");
-					}
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("%02X", VALUE.value[a]);
-					printf("\n");
-				}
-
-				
+				printf("Repositories: \n%s\n", v.srs->getSupportedRepositoriesString().c_str());
 			}
-
 
 		} SUPPORTED_REPOSITORIES, * PSUPPORTED_REPOSITORIES;
 
-		typedef struct PBAP_SUPPORTED_FEATURES_S
+		typedef struct PBAP_SUPPORTED_FEATURES_S : DEFAULT_OBJECT
 		{
-			ATTR_ID* attr_id;
-
-			struct VV : VALUE
+			// TODO: print values
+			template<class T>
+			void print(T v)
 			{
+				printATTR_ELEMENT();
 
-
-			} VALUE;
-
-			void print()
-			{
-				printf("ATTRIBUTE ID:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(attr_id->element->element.type).c_str(), attr_id->element->element.type);
-
-				if (attr_id->additional_bits_flag)
-				{
-					printf("Additional size: %d\n", attr_id->additional_bits_for_size);
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", attr_id->size_bytes, attr_id->size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < attr_id->size_bytes; a++)
-						printf("%02X", attr_id->value[a]);
-					printf("\n");
-				}
-
-				printf("VALUE ELEMENT:\n");
-				printf("Type: %s [%d]\n", FUNCTIONS::getElementTypeString(VALUE.element->element.type).c_str(), VALUE.element->element.type);
-				if (VALUE.additional_bits_flag)
-				{
-					printf("Additional size: %d\n", VALUE.additional_bits_for_size);
-					if (VALUE.additional_bits_for_size == 1)
-					{
-						printf("Data size: %d\n", VALUE.size_bytes);
-
-						printf("Value: ");
-						for (int a = 0; a < VALUE.size_bytes; a++)
-							printf("%02X", VALUE.value[a]);
-						printf("\n");
-					}
-				}
-				else
-				{
-					printf("Size: %d Bytes [%d]\n", VALUE.size_bytes, VALUE.size_bytes);
-
-					printf("Value: 0x");
-					for (int a = 0; a < VALUE.size_bytes; a++)
-						printf("%02X", VALUE.value[a]);
-					printf("\n");
-				}
-
-
+				printVALUE_ELEMENT(v);
 			}
 
 
@@ -1463,17 +937,322 @@ namespace SDP
 		int getAndParse_SUPPORTED_REPOSITORIES_PBAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 		int getAndParse_PBAP_SUPPORTED_FEATURES_PBAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 
+	};
 
 
+	namespace OBEX
+	{
+		typedef enum
+		{
+			GoepL2capPsm = 0x0200,
+			ServiceVersion = 0x0300,
+			SupportedFormatsList = 0x0303
+
+		} ATTRIBUTE_ID_OBEX;
+
+		std::string getSupportedFormatsString(BYTE data[], int size);
+
+		typedef struct SERVICE_VERSION_S : DEFAULT_OBJECT
+		{
+
+		} SERVICE_VERSION, * PSERVICE_VERSION;
+
+		typedef struct SUPPORTED_FORMATS_S : DEFAULT_OBJECT
+		{
+			struct VV : VALUE
+			{
+				int num_of_formats;
+				BYTE* formats;
+
+			} VALUE;
+
+			template<class T>
+			void print(T v)
+			{
+				printATTR_ELEMENT();
+
+				printVALUE_ELEMENT(v);
+
+				printf("Number of supported formats: %d\n", v.num_of_formats);
+
+				printf("Supported formats: \n");
+				for (int aa = 0; aa < v.num_of_formats; aa++)
+					printf("0x%02X ", v.formats[aa]);
+				printf("\n");
+
+				printf("Formats: \n%s\n", getSupportedFormatsString(v.formats, v.num_of_formats).c_str());
+			}
+
+		} SUPPORTED_FORMATS, * PSUPPORTED_FORMATS;
+
+		// GoepL2CapPsm use from MAP
+
+		int getAndParse_SERVICE_VERSION_OBEX(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		int getAndParse_SUPPORTED_FORMATS_LIST_OBEX(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+
+	};
 
 
+	namespace HFP
+	{
+		typedef enum
+		{
+			Network = 0x0301,
+			SupportedFeatures = 0x0311
+
+		} ATTRIBUTE_ID_HFP;
+
+		struct SUPPORTED_FEATURES_DATA_S
+		{
+			struct SR_S
+			{
+				BYTE a0 : 1;
+				BYTE a1 : 1;
+				BYTE a2 : 1;
+				BYTE a3 : 1;
+				BYTE a4 : 1;
+				BYTE a5 : 1;
+				BYTE a6 : 1;
+				BYTE a7 : 1;
+				BYTE : 8;
+
+			};
+
+			SR_S* repo;
+
+			SUPPORTED_FEATURES_DATA_S(SHORT* a) : repo((SR_S*)a)
+			{
+				printf("FROM STRUCT --> %X\n", *a);
+			};
+
+			std::string getSupportedFeatures_AG_String()
+			{
+				std::string temp = "";
+
+				if (repo->a0)
+				{
+					temp += "Three-way calling\n";
+				}
+
+				if (repo->a1)
+				{
+					temp += "EC and/or NR function\n";
+				}
+
+				if (repo->a2)
+				{
+					temp += "Voice recognition function\n";
+				}
+
+				if (repo->a3)
+				{
+					temp += "In-band ring tone capability\n";
+				}
+
+				if (repo->a4)
+				{
+					temp += "Attach a phone number to a voice tag\n";
+				}
+
+				if (repo->a5)
+				{
+					temp += "Wide band speech\n";
+				}
+
+				if (repo->a6)
+				{
+					temp += "Enhanced Voice Recognition Status \n";
+				}
+
+				if (repo->a7)
+				{
+					temp += "Voice Recognition Text\n";
+				}
+
+				return temp;
+			}
+
+			std::string getSupportedFeaturesString()
+			{
+				std::string temp = "";
+
+				if (repo->a0)
+				{
+					temp += "EC and/or NR function\n";
+				}
+
+				if (repo->a1)
+				{
+					temp += "Call waiting or three-way calling\n";
+				}
+
+				if (repo->a2)
+				{
+					temp += "CLI presentation capability\n";
+				}
+
+				if (repo->a3)
+				{
+					temp += "Voice recognition activation\n";
+				}
+
+				if (repo->a4)
+				{
+					temp += "Remote volume control\n";
+				}
+
+				if (repo->a5)
+				{
+					temp += "Wide band speech\n";
+				}
+
+				if (repo->a6)
+				{
+					temp += "Enhanced Voice Recognition Status\n";
+				}
+
+				if (repo->a7)
+				{
+					temp += "Voice Recognition Text\n";
+				}
+
+				return temp;
+			}
+		};
+
+		typedef struct NETWORK_S : DEFAULT_OBJECT
+		{
+			template<class T>
+			void print(T v)
+			{
+				printATTR_ELEMENT();
+
+				printVALUE_ELEMENT(v);
+
+				printf("Network: %s\n", v.value[0] == 0x01 ? "Ability to reject a call" : "No ability to reject a call");
+			}
+
+		} NETWORK, * PNETWORK;
+
+		typedef struct SUPPORTED_FEATURES_S : DEFAULT_OBJECT
+		{
+			struct VV : VALUE
+			{
+				SHORT supported_features_value;
+
+				SUPPORTED_FEATURES_DATA_S* sfds;
+
+			} VALUE;
+
+			template<class T>
+			void print(T v)
+			{
+				printATTR_ELEMENT();
+
+				printVALUE_ELEMENT(v);
+
+				// TODO: naredi da bo tudi za brez AG (trenutno narejeno samo za AG)
+				printf("Supported features: 0x%04X\n", v.supported_features_value);
+				printf("%s\n", v.sfds->getSupportedFeatures_AG_String().c_str());
+
+			}
+
+		} SUPPORTED_FEATURES, * PSUPPORTED_FEATURES;
+
+		int getAndParse_NETWORK_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		int getAndParse_SUPPORTED_FEATURES_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+	}
+
+
+	namespace PNPINFO	// PnPInformation
+	{
+		typedef enum
+		{
+			SpecificationID = 0x0200,
+			VendorID = 0x0201,
+			ProductID = 0x0202,
+			Version = 0x0203,
+			PrimaryRecord = 0x0204,
+			VendorIDSource = 0x0205,
+			ClientExecutableURL = 0x000B,
+			DocumentationURL = 0x000A
+
+		} ATTRIBUTE_ID_DEVICE_SDP;
+
+		typedef struct INFO_S : DEFAULT_OBJECT
+		{
+			SHORT SpecificationID;
+			SHORT VendorID;
+			SHORT ProductID;
+			SHORT Version;
+			BOOL PrimaryRecord;
+			SHORT VendorIDSource;
+
+			template<class A>
+			void setIDdata(SHORT id, A data)
+			{
+				switch (id)
+				{
+				case ATTRIBUTE_ID_DEVICE_SDP::SpecificationID:
+					this->SpecificationID = data;
+					break;
+
+				case ATTRIBUTE_ID_DEVICE_SDP::VendorID:
+					this->VendorID = data;
+					break;
+
+				case ATTRIBUTE_ID_DEVICE_SDP::ProductID:
+					this->ProductID = data;
+					break;
+
+				case ATTRIBUTE_ID_DEVICE_SDP::Version:
+					this->Version = data;
+					break;
+
+				case ATTRIBUTE_ID_DEVICE_SDP::PrimaryRecord:
+					this->PrimaryRecord = data;
+					break;
+
+				case ATTRIBUTE_ID_DEVICE_SDP::VendorIDSource:
+					this->VendorIDSource = data;
+					break;
+				}
+			}
+
+
+			template<class T>
+			void print(T v)
+			{
+				printATTR_ELEMENT();
+
+				printVALUE_ELEMENT(v);
+
+				printf("Specification ID: 0x%04X\n", this->SpecificationID);
+				printf("Vendor ID: 0x%04X\n", this->VendorID);
+				printf("Product ID: 0x%04X\n", this->ProductID);
+				printf("Version: 0x%04X\n", this->Version);
+				printf("Primary Record: 0x%02X\n", this->PrimaryRecord);
+				printf("Vendor ID Source: 0x%04X\n", this->VendorIDSource);
+			}
+
+		} INFO, * PINFO;
+
+
+		int getAndParse_SPECIFICATION_ID_PNPINFO(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 
 	};
 
 
 
 
+
+
+
+
+	
 };
+
+
 
 /*
 	Core_v5.2%20(1).pdf --> 1224 page

@@ -1,47 +1,49 @@
 ﻿#include "main.h"
 
+
+
 int SDP::FUNCTIONS::getElementSize(BYTE size, int* add_bits)
 {
 	switch (size)
 	{
-		case SDP::_1_byte:
-			*add_bits = 0;
-			return 1;
+	case SDP::_1_byte:
+		*add_bits = 0;
+		return 1;
 		break;
 
-		case SDP::_2_bytes:
-			*add_bits = 0;
-			return 2;
+	case SDP::_2_bytes:
+		*add_bits = 0;
+		return 2;
 		break;
 
-		case SDP::_4_bytes:
-			*add_bits = 0;
-			return 4;
+	case SDP::_4_bytes:
+		*add_bits = 0;
+		return 4;
 		break;
 
-		case SDP::_8_bytes:
-			*add_bits = 0;
-			return 8;
+	case SDP::_8_bytes:
+		*add_bits = 0;
+		return 8;
 		break;
 
-		case SDP::_16_bytes:
-			*add_bits = 0;
-			return 16;
+	case SDP::_16_bytes:
+		*add_bits = 0;
+		return 16;
 		break;
 
-		case SDP::_additional_8_bits:
-			*add_bits = 1;
-			return 1;
+	case SDP::_additional_8_bits:
+		*add_bits = 1;
+		return 1;
 		break;
 
-		case SDP::_additional_16_bits:
-			*add_bits = 1;
-			return 2;
+	case SDP::_additional_16_bits:
+		*add_bits = 1;
+		return 2;
 		break;
 
-		case SDP::_additional_32_bits:
-			*add_bits = 1;
-			return 4;
+	case SDP::_additional_32_bits:
+		*add_bits = 1;
+		return 4;
 		break;
 	}
 }
@@ -52,40 +54,40 @@ std::string SDP::FUNCTIONS::getElementTypeString(BYTE type)
 
 	switch (type)
 	{
-		case SDP::_Nil:
-			temp = "NIL";
+	case SDP::_Nil:
+		temp = "NIL";
 		break;
 
-		case SDP::_Unsigned_int:
-			temp = "Unsigned int";
+	case SDP::_Unsigned_int:
+		temp = "Unsigned int";
 		break;
 
-		case SDP::_Signed_twos_complement_int:
-			temp = "Signed twos complement int";
+	case SDP::_Signed_twos_complement_int:
+		temp = "Signed twos complement int";
 		break;
 
-		case SDP::_UUID:
-			temp = "UUID";
+	case SDP::_UUID:
+		temp = "UUID";
 		break;
 
-		case SDP::_Text_string:
-			temp = "Text string";
+	case SDP::_Text_string:
+		temp = "Text string";
 		break;
 
-		case SDP::_Boolean:
-			temp = "Boolean";
+	case SDP::_Boolean:
+		temp = "Boolean";
 		break;
 
-		case SDP::_Data_element_sequence:
-			temp = "Data element sequence";
+	case SDP::_Data_element_sequence:
+		temp = "Data element sequence";
 		break;
 
-		case SDP::_Data_element_alternative:
-			temp = "Data element alternative";
+	case SDP::_Data_element_alternative:
+		temp = "Data element alternative";
 		break;
 
-		case SDP::_URL:
-			temp = "URL";
+	case SDP::_URL:
+		temp = "URL";
 		break;
 	}
 
@@ -98,84 +100,84 @@ std::string SDP::FUNCTIONS::getProtocolTypeString(SHORT type)
 
 	switch (type)
 	{
-		case SDP::_SDP:
-			temp = "SDP";
+	case SDP::_SDP:
+		temp = "SDP";
 		break;
 
-		case SDP::_UDP:
-			temp = "UDP";
+	case SDP::_UDP:
+		temp = "UDP";
 		break;
 
-		case SDP::_RFCOMM:
-			temp = "RFCOMM";
+	case SDP::_RFCOMM:
+		temp = "RFCOMM";
 		break;
 
-		case SDP::_TCP:
-			temp = "TCP";
+	case SDP::_TCP:
+		temp = "TCP";
 		break;
 
-		case SDP::_TCS_BIN:
-			temp = "TCS‐BIN";
+	case SDP::_TCS_BIN:
+		temp = "TCS‐BIN";
 		break;
 
-		case SDP::_TCS_AT:
-			temp = "TCS‐AT";
+	case SDP::_TCS_AT:
+		temp = "TCS‐AT";
 		break;
 
-		case SDP::_ATT:
-			temp = "ATT";
+	case SDP::_ATT:
+		temp = "ATT";
 		break;
 
-		case SDP::_OBEX:
-			temp = "OBEX";
+	case SDP::_OBEX:
+		temp = "OBEX";
 		break;
 
-		case SDP::_IP:
-			temp = "IP";
+	case SDP::_IP:
+		temp = "IP";
 		break;
 
-		case SDP::_FTP:
-			temp = "FTP";
+	case SDP::_FTP:
+		temp = "FTP";
 		break;
 
-		case SDP::_HTTP:
-			temp = "HTTP";
+	case SDP::_HTTP:
+		temp = "HTTP";
 		break;
 
-		case SDP::_WSP:
-			temp = "WSP";
+	case SDP::_WSP:
+		temp = "WSP";
 		break;
 
-		case SDP::_BNEP:
-			temp = "BNEP";
+	case SDP::_BNEP:
+		temp = "BNEP";
 		break;
 
-		case SDP::_UPNP:
-			temp = "UPNP";
+	case SDP::_UPNP:
+		temp = "UPNP";
 		break;
 
-		case SDP::_HIDP:
-			temp = "HIDP";
+	case SDP::_HIDP:
+		temp = "HIDP";
 		break;
 
-		case SDP::_AVCTP:
-			temp = "AVCTP";
+	case SDP::_AVCTP:
+		temp = "AVCTP";
 		break;
 
-		case SDP::_AVDTP:
-			temp = "AVDTP";
+	case SDP::_AVDTP:
+		temp = "AVDTP";
 		break;
 
-		case SDP::_CMTP:
-			temp = "CMTP";
+	case SDP::_CMTP:
+		temp = "CMTP";
 		break;
 
-		case SDP::_L2CAP:
-			temp = "L2CAP";
+	case SDP::_L2CAP:
+		temp = "L2CAP";
 		break;
 
-		default:
-			temp = "Unknown type";
+	default:
+		temp = "Unknown type";
 		break;
 	}
 
@@ -188,20 +190,20 @@ std::string SDP::FUNCTIONS::getNetworkPacketTypeString(SHORT type)
 
 	switch (type)
 	{
-		case SDP::IPv4:
-			temp = "Internet Protocol Version 4 (IPv4)";
+	case SDP::IPv4:
+		temp = "Internet Protocol Version 4 (IPv4)";
 		break;
 
-		case SDP::ARP:
-			temp = "Address Resolution Protocol (ARP)";
+	case SDP::ARP:
+		temp = "Address Resolution Protocol (ARP)";
 		break;
 
-		case SDP::FRARP:
-			temp = "Frame Relay ARP";
+	case SDP::FRARP:
+		temp = "Frame Relay ARP";
 		break;
 
-		case SDP::IPv6:
-			temp = "Internet Protocol Version 6 (IPv6)";
+	case SDP::IPv6:
+		temp = "Internet Protocol Version 6 (IPv6)";
 		break;
 	}
 
@@ -249,11 +251,11 @@ BOOL SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(ULONG recordHandle, H
 }
 
 
-void SDP::FUNCTIONS::printResponse( BYTE bssr_response[])
+void SDP::FUNCTIONS::printResponse(BYTE bssr_response[])
 {
 	BTH_SDP_STREAM_RESPONSE* bssr_temp = new BTH_SDP_STREAM_RESPONSE();
 	bssr_temp = (BTH_SDP_STREAM_RESPONSE*)bssr_response;
-	
+
 	int MAX_length_response = (sizeof(BTH_SDP_STREAM_RESPONSE) + bssr_temp->responseSize);
 
 
@@ -275,10 +277,10 @@ template<class A, class B>
 int SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT(A id_handle, B res, int res_length)
 {
 	int position = sizeof(BTH_SDP_STREAM_RESPONSE) + 1 + 0;
-	
+
 	SDP::PATTRIBUTE_ID_ELEMENT record_handle_element = new SDP::ATTRIBUTE_ID_ELEMENT();
 	record_handle_element = (SDP::PATTRIBUTE_ID_ELEMENT)(res + position);
-	
+
 	id_handle->attr_id = new ATTR_ID();
 	id_handle->attr_id->element = record_handle_element;
 
@@ -371,7 +373,7 @@ int SDP::FUNCTIONS::set_save_VALUE_ELEMENT(A id_handle, B res, int res_length, i
 int SDP::FUNCTIONS::getAndParse_SERVICE_RECORD_HANDLE(ULONG recordHandle, HANDLE_SDP_TYPE aa)
 {
 	printf("\n\n*** getAndParse_SERVICE_RECORD_HANDLE ***\n");
-	
+
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
 	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceRecordHandle, SDP::ServiceRecordHandle, bssr_response, 5000);
@@ -380,21 +382,16 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_RECORD_HANDLE(ULONG recordHandle, HANDLE
 	{
 		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
 
-		printResponse( bssr_response);
-	
-		SDP::PSERVICE_RECORD_HANDLE record_handle = new SDP::SERVICE_RECORD_HANDLE();
+		printResponse(bssr_response);
 
-		int position = set_save_ATTRIBUTE_ELEMENT<PSERVICE_RECORD_HANDLE, BYTE[]>(record_handle, bssr_response, 5000);
+		SDP::PDEFAULT_OBJECT record_handle = new SDP::DEFAULT_OBJECT();
 
+		int position = set_save_ATTRIBUTE_ELEMENT<PDEFAULT_OBJECT, BYTE[]>(record_handle, bssr_response, 5000);
 
+		position = set_save_VALUE_ELEMENT<PDEFAULT_OBJECT, BYTE[]>(record_handle, bssr_response, 5000, position);
 
-		position = set_save_VALUE_ELEMENT<PSERVICE_RECORD_HANDLE, BYTE[]>(record_handle, bssr_response, 5000, position);
+		record_handle->print(record_handle->VALUE);
 
-		
-		record_handle->print();
-		
-		
-		
 		return 1;
 	}
 
@@ -404,7 +401,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_RECORD_HANDLE(ULONG recordHandle, HANDLE
 int SDP::FUNCTIONS::getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa)
 {
 	printf("*** getAndParse_SERVICE_CLASS_ID_LIST ***\n");
-	
+
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
 	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceClassIDList, SDP::ServiceClassIDList, bssr_response, 5000);
@@ -413,7 +410,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE
 	{
 		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
 
-		printResponse( bssr_response);
+		printResponse(bssr_response);
 
 
 		SDP::PSERVICE_CLASS_ID_LIST class_id_handle = new SDP::SERVICE_CLASS_ID_LIST();
@@ -424,7 +421,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE
 		position = set_save_VALUE_ELEMENT<PSERVICE_CLASS_ID_LIST, BYTE[]>(class_id_handle, bssr_response, 5000, position);
 
 
-		
+
 		class_id_handle->VALUE.num_classes = class_id_handle->VALUE.size_bytes / 3;
 
 
@@ -433,7 +430,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE
 
 		class_id_handle->VALUE.classes = new SDP::SERVICE_CLASS[class_id_handle->VALUE.num_classes]();
 
-		for (int a = 0, b=0; a < class_id_handle->VALUE.size_bytes; a+=3, b++)
+		for (int a = 0, b = 0; a < class_id_handle->VALUE.size_bytes; a += 3, b++)
 		{
 			SDP::ATTRIBUTE_ID_ELEMENT* temp_att_id = new SDP::ATTRIBUTE_ID_ELEMENT();
 			temp_att_id = (SDP::ATTRIBUTE_ID_ELEMENT*)(class_id_handle->VALUE.value + a);
@@ -447,15 +444,10 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE
 			class_id_handle->VALUE.classes[b].value |= *(class_id_handle->VALUE.value + a + 2);
 		}
 
-		//printf("\n");
-		//printf("\n");
-
-		class_id_handle->print();
+		class_id_handle->print<SERVICE_CLASS_ID_LIST_S::VV>(class_id_handle->VALUE);
 
 		return 1;
 	}
-
-
 
 	return 0;
 }
@@ -463,7 +455,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE
 int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa)
 {
 	printf("\n\n*** getAndParse_PROTOCOL_DESCRIPTOR_LIST ***\n");
-	
+
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
 	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ProtocolDescriptorList, SDP::ProtocolDescriptorList, bssr_response, 5000);
@@ -472,17 +464,17 @@ int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HAN
 	{
 		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
 
-		printResponse( bssr_response);
+		printResponse(bssr_response);
 
 
-		SDP::PROTOCOL_DESCRIPTOR_LIST *protocol_descriptor_list_handle = new SDP::PROTOCOL_DESCRIPTOR_LIST();
+		SDP::PROTOCOL_DESCRIPTOR_LIST* protocol_descriptor_list_handle = new SDP::PROTOCOL_DESCRIPTOR_LIST();
 
 		int position = set_save_ATTRIBUTE_ELEMENT<PROTOCOL_DESCRIPTOR_LIST*, BYTE[]>(protocol_descriptor_list_handle, bssr_response, 5000);
 
 
 		position = set_save_VALUE_ELEMENT<PROTOCOL_DESCRIPTOR_LIST*, BYTE[]>(protocol_descriptor_list_handle, bssr_response, 5000, position);
 
-		
+
 		/* presteje se koliko je protokolov */
 		protocol_descriptor_list_handle->VALUE.num_protocols = 0;
 
@@ -590,7 +582,7 @@ int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HAN
 					if (protocol_descriptor_list_handle->VALUE.protocols[c].protocol_id == SDP::_BNEP)
 					{
 						protocol_descriptor_list_handle->VALUE._BNEP_flag = 1;
-						
+
 						for (int cc = 0; cc < protocol_descriptor_list_handle->VALUE.protocols[c].additional_bits_for_size; cc++)
 						{
 							if (*(protocol_descriptor_list_handle->VALUE.protocols[c].value + cc) == 0x35)
@@ -631,7 +623,7 @@ int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HAN
 			}
 
 
-			
+
 
 
 
@@ -648,7 +640,7 @@ int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HAN
 
 		}
 
-		protocol_descriptor_list_handle->print();
+		protocol_descriptor_list_handle->print<PROTOCOL_DESCRIPTOR_LIST::VV>(protocol_descriptor_list_handle->VALUE);
 
 		return 1;
 	}
@@ -656,10 +648,10 @@ int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HAN
 	return 0;
 }
 
-int SDP::FUNCTIONS::getAndParse_SERVICE_NAME (ULONG recordHandle, HANDLE_SDP_TYPE aa)
+int SDP::FUNCTIONS::getAndParse_SERVICE_NAME(ULONG recordHandle, HANDLE_SDP_TYPE aa)
 {
 	printf("\n\n*** getAndParse_SERVICE_NAME ***\n");
-	
+
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
 	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceName, SDP::ServiceName, bssr_response, 5000);
@@ -668,7 +660,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_NAME (ULONG recordHandle, HANDLE_SDP_TYP
 	{
 		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
 
-		printResponse( bssr_response);
+		printResponse(bssr_response);
 
 		SDP::SERVICE_NAME* service_name_handle = new SDP::SERVICE_NAME();
 
@@ -677,10 +669,42 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_NAME (ULONG recordHandle, HANDLE_SDP_TYP
 
 		position = set_save_VALUE_ELEMENT<SERVICE_NAME*, BYTE[]>(service_name_handle, bssr_response, 5000, position);
 
-		
-		service_name_handle->print();
+		service_name_handle->VALUE.service_name = new char[service_name_handle->VALUE.size_bytes]();
+		memcpy(service_name_handle->VALUE.service_name, service_name_handle->VALUE.value, service_name_handle->VALUE.size_bytes);
+
+		service_name_handle->print<SERVICE_NAME::VV>(service_name_handle->VALUE);
+
+		return 1;
+	}
+
+	return 0;
+}
+
+int SDP::FUNCTIONS::getAndParse_PROVIDER_NAME(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+{
+	printf("\n\n*** getAndParse_PROVIDER_NAME ***\n");
+
+	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
+
+	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ProviderName, SDP::ProviderName, bssr_response, 5000);
+
+	if (test)
+	{
+		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
+
+		printResponse(bssr_response);
+
+		SDP::PROVIDER_NAME* provider_name_handle = new SDP::PROVIDER_NAME();
+
+		int position = set_save_ATTRIBUTE_ELEMENT<PROVIDER_NAME*, BYTE[]>(provider_name_handle, bssr_response, 5000);
 
 
+		position = set_save_VALUE_ELEMENT<PROVIDER_NAME*, BYTE[]>(provider_name_handle, bssr_response, 5000, position);
+
+		provider_name_handle->VALUE.provider_name = new char[provider_name_handle->VALUE.size_bytes]();
+		memcpy(provider_name_handle->VALUE.provider_name, provider_name_handle->VALUE.value, provider_name_handle->VALUE.size_bytes);
+
+		provider_name_handle->print<PROVIDER_NAME::VV>(provider_name_handle->VALUE);
 
 		return 1;
 	}
@@ -718,11 +742,11 @@ int SDP::FUNCTIONS::getAndParse_BLUETOOTH_PROFILE_DESCRIPTOR_LIST(ULONG recordHa
 		bluetooth_profile_descriptor_list_handle->VALUE.profile_version |= bluetooth_profile_descriptor_list_handle->VALUE.value[6];
 		bluetooth_profile_descriptor_list_handle->VALUE.profile_version <<= 8;
 		bluetooth_profile_descriptor_list_handle->VALUE.profile_version |= bluetooth_profile_descriptor_list_handle->VALUE.value[7];
-	
+
 		// TODO: popravi za primer ko jih je vec naenkrat
 
-	
-		bluetooth_profile_descriptor_list_handle->print();
+
+		bluetooth_profile_descriptor_list_handle->print<BLUETOOTH_PROFILE_DESCRIPTOR_LIST::VV>(bluetooth_profile_descriptor_list_handle->VALUE);
 
 
 		return 1;
@@ -735,7 +759,7 @@ int SDP::FUNCTIONS::getAndParse_BLUETOOTH_PROFILE_DESCRIPTOR_LIST(ULONG recordHa
 int SDP::FUNCTIONS::getAndParse_LANGUAGE_BASE_ATTRIBUTE_ID_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa)
 {
 	printf("\n\n*** getAndParse_LANGUAGE_BASE_ATTRIBUTE_ID_LIST ***\n");
-	
+
 	BYTE bssr_response[5000]{ 0 };
 
 	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::LanguageBaseAttributeIDList, SDP::LanguageBaseAttributeIDList, bssr_response, 5000);
@@ -744,7 +768,7 @@ int SDP::FUNCTIONS::getAndParse_LANGUAGE_BASE_ATTRIBUTE_ID_LIST(ULONG recordHand
 	{
 		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
 
-		printResponse( bssr_response);
+		printResponse(bssr_response);
 
 
 		SDP::LANGUAGE_BASE_ATTRIBUTE_ID_LIST* language_base_attribute_id_list_handle = new SDP::LANGUAGE_BASE_ATTRIBUTE_ID_LIST();
@@ -754,14 +778,14 @@ int SDP::FUNCTIONS::getAndParse_LANGUAGE_BASE_ATTRIBUTE_ID_LIST(ULONG recordHand
 
 		position = set_save_VALUE_ELEMENT<LANGUAGE_BASE_ATTRIBUTE_ID_LIST*, BYTE[]>(language_base_attribute_id_list_handle, bssr_response, 5000, position);
 
-		
+
 		// TODO: naredi ce je teh tripletov vec kot eden (trenutno je narejeno samo za enega)
 
 		/*
 			TRIPLET:
 			example:
 			0x09 0x65 0x6E 0x09 0x00 0x6A 0x09 0x01 0x00
-			
+
 			0x09 0x65 0x6E <-- identifier representing the natural language
 			0x09 0x00 0x6A <-- identifier that specifies a character encoding used for the language
 			0x09 0x01 0x00 <-- attribute ID that serves as the base attribute ID
@@ -779,7 +803,7 @@ int SDP::FUNCTIONS::getAndParse_LANGUAGE_BASE_ATTRIBUTE_ID_LIST(ULONG recordHand
 		language_base_attribute_id_list_handle->VALUE.triplet_attribute_id <<= 8;
 		language_base_attribute_id_list_handle->VALUE.triplet_attribute_id |= language_base_attribute_id_list_handle->VALUE.value[8];
 
-		language_base_attribute_id_list_handle->print();
+		language_base_attribute_id_list_handle->print<LANGUAGE_BASE_ATTRIBUTE_ID_LIST::VV>(language_base_attribute_id_list_handle->VALUE);
 
 		return 1;
 	}
@@ -790,7 +814,7 @@ int SDP::FUNCTIONS::getAndParse_LANGUAGE_BASE_ATTRIBUTE_ID_LIST(ULONG recordHand
 int SDP::FUNCTIONS::getAndParse_SERVICE_AVAILABILITY(ULONG recordHandle, HANDLE_SDP_TYPE aa)
 {
 	printf("\n\n*** getAndParse_SERVICE_AVAILABILITY ***\n");
-	
+
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
 	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceAvailability, SDP::ServiceAvailability, bssr_response, 5000);
@@ -799,7 +823,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_AVAILABILITY(ULONG recordHandle, HANDLE_
 	{
 		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
 
-		printResponse( bssr_response);
+		printResponse(bssr_response);
 
 
 		// TODO: najdi en primer, da se lahko naredi do konca parsanje
@@ -816,7 +840,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_AVAILABILITY(ULONG recordHandle, HANDLE_
 int SDP::FUNCTIONS::getAndParse_SERVICE_DESCRIPTION(ULONG recordHandle, HANDLE_SDP_TYPE aa)
 {
 	printf("\n\n*** getAndParse_SERVICE_DESCRIPTION ***\n");
-	
+
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
 	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceDescription, SDP::ServiceDescription, bssr_response, 5000);
@@ -825,7 +849,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_DESCRIPTION(ULONG recordHandle, HANDLE_S
 	{
 		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
 
-		printResponse( bssr_response);
+		printResponse(bssr_response);
 
 		SDP::SERVICE_DESCRIPTION* service_description_handle = new SDP::SERVICE_DESCRIPTION();
 
@@ -834,8 +858,10 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_DESCRIPTION(ULONG recordHandle, HANDLE_S
 
 		position = set_save_VALUE_ELEMENT<SERVICE_DESCRIPTION*, BYTE[]>(service_description_handle, bssr_response, 5000, position);
 
-		
-		service_description_handle->print();
+		service_description_handle->VALUE.description = new char[service_description_handle->VALUE.size_bytes]();
+		memcpy(service_description_handle->VALUE.description, service_description_handle->VALUE.value, service_description_handle->VALUE.size_bytes);
+
+		service_description_handle->print<SERVICE_DESCRIPTION::VV>(service_description_handle->VALUE);
 
 		return 1;
 	}
@@ -848,6 +874,21 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_DESCRIPTION(ULONG recordHandle, HANDLE_S
 
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -977,7 +1018,7 @@ int SDP::NAP::getAndParse_SECURITY_DESCRIPTION_PAN(ULONG recordHandle, HANDLE_SD
 
 
 
-		security_description_handle->print();
+		security_description_handle->print<SECURITY_DESCRIPTION::VV>(security_description_handle->VALUE);
 
 		return 1;
 	}
@@ -1017,7 +1058,7 @@ int SDP::NAP::getAndParse_NET_ACCESS_TYPE_PAN(ULONG recordHandle, HANDLE_SDP_TYP
 		net_access_type_handle->VALUE.NetAccessType |= net_access_type_handle->VALUE.value[1];
 
 
-		net_access_type_handle->print();
+		net_access_type_handle->print<NET_ACCESS_TYPE::VV>(net_access_type_handle->VALUE);
 
 
 
@@ -1057,7 +1098,7 @@ int SDP::NAP::getAndParse_MAX_NET_ACCESS_RATE_PAN(ULONG recordHandle, HANDLE_SDP
 		max_net_access_rate_handle->VALUE.Maximum_possible_Network_Access_Data_Rate |= max_net_access_rate_handle->VALUE.value[3];
 		
 
-		max_net_access_rate_handle->print();
+		max_net_access_rate_handle->print<MAX_NET_ACCESS_RATE::VV>(max_net_access_rate_handle->VALUE);
 
 		return 1;
 	}
@@ -1070,7 +1111,7 @@ int SDP::NAP::getAndParse_MAX_NET_ACCESS_RATE_PAN(ULONG recordHandle, HANDLE_SDP
 /*********************************************************************************************************************/
 /* MAP SPECIFIC */
 
-std::string SDP::MAP::getMessageTypesString(SUPPORTED_FEATURES_MESSAGES_S* sfm)
+std::string SDP::MAP::getMessageTypesString(SDP::MAP::SUPPORTED_FEATURES_MESSAGES_S* sfm)
 {
 	std::string temp = "";
 
@@ -1102,7 +1143,7 @@ std::string SDP::MAP::getMessageTypesString(SUPPORTED_FEATURES_MESSAGES_S* sfm)
 	return temp;
 }
 
-std::string SDP::MAP::getSupportedFeaturesString(SUPPORTED_FEATURES_MESSAGES_S* sfm)
+std::string SDP::MAP::getSupportedFeaturesString(SDP::MAP::SUPPORTED_FEATURES_MESSAGES_S* sfm)
 {
 	std::string temp = "";
 
@@ -1248,10 +1289,14 @@ int SDP::MAP::getAndParse_GOEPL2CAPPSM_MAP(ULONG recordHandle, HANDLE_SDP_TYPE a
 
 		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::MAP::GOEPL2CAPPSM*, BYTE[]>(goepl2cappsm_handle, bssr_response, 5000, position);
 
-		// TODO: prevedi pomen vrednosti
+		SHORT temp = 0x00;
+		temp |= goepl2cappsm_handle->VALUE.value[0];
+		temp <<= 8;
+		temp |= goepl2cappsm_handle->VALUE.value[1];
 
+		goepl2cappsm_handle->VALUE.GoepL2CapPsm_value = temp;
 
-		goepl2cappsm_handle->print();
+		goepl2cappsm_handle->print<GOEPL2CAPPSM::VV>(goepl2cappsm_handle->VALUE);
 
 
 		return 1;
@@ -1284,7 +1329,7 @@ int SDP::MAP::getAndParse_SUPPORTED_MESSAGE_TYPES_MAP(ULONG recordHandle, HANDLE
 
 		supported_message_types_handle->VALUE.sfm = new SUPPORTED_FEATURES_MESSAGES_S(supported_message_types_handle->VALUE.value);
 
-		supported_message_types_handle->print();
+		supported_message_types_handle->print<SUPPORTED_MESSAGE_TYPES::VV>(supported_message_types_handle->VALUE);
 
 		return 1;
 	}
@@ -1313,10 +1358,9 @@ int SDP::MAP::getAndParse_MAS_INSTANCE_ID_MAP(ULONG recordHandle, HANDLE_SDP_TYP
 
 		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::MAP::MAS_INSTANCE_ID*, BYTE[]>(mas_instance_id_handle, bssr_response, 5000, position);
 
-		// TODO: prevedi pomen vrednosti
+		mas_instance_id_handle->VALUE.instance_ID = mas_instance_id_handle->VALUE.value[0];
 
-
-		mas_instance_id_handle->print();
+		mas_instance_id_handle->print<MAS_INSTANCE_ID::VV>(mas_instance_id_handle->VALUE);
 
 
 
@@ -1359,7 +1403,7 @@ int SDP::MAP::getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_
 
 		map_supported_features_handle->VALUE.sfm = new SUPPORTED_FEATURES_MESSAGES_S(&temp);
 
-		map_supported_features_handle->print();
+		map_supported_features_handle->print<MAP_SUPPORTED_FEATURES::VV>(map_supported_features_handle->VALUE);
 
 		return 1;
 	}
@@ -1392,12 +1436,11 @@ int SDP::PBAP::getAndParse_SUPPORTED_REPOSITORIES_PBAP(ULONG recordHandle, HANDL
 
 		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::PBAP::SUPPORTED_REPOSITORIES*, BYTE[]>(supported_repositories_handle, bssr_response, 5000);
 
-
 		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::PBAP::SUPPORTED_REPOSITORIES*, BYTE[]>(supported_repositories_handle, bssr_response, 5000, position);
 
-		// TODO: prevedi values kaj pomeni
+		supported_repositories_handle->VALUE.srs = new SUPPORTED_REPOSITORIES_DATA_S(supported_repositories_handle->VALUE.value);
 
-		supported_repositories_handle->print();
+		supported_repositories_handle->print<SUPPORTED_REPOSITORIES::VV>(supported_repositories_handle->VALUE);
 
 		return 1;
 	}
@@ -1429,7 +1472,288 @@ int SDP::PBAP::getAndParse_PBAP_SUPPORTED_FEATURES_PBAP(ULONG recordHandle, HAND
 		// TODO: prevedi values kaj pomeni
 		// TODO: poisci device ki ima verzijo 1.2 ali vec
 
-		pbap_supported_features_handle->print();
+		pbap_supported_features_handle->print<PBAP_SUPPORTED_FEATURES::VV>(pbap_supported_features_handle->VALUE);
+
+		return 1;
+	}
+
+	return 0;
+}
+
+
+/*********************************************************************************************************************/
+/* OBEX SPECIFIC */
+
+// FOR	 GoepL2CapPsm YOU CAN USE FROM MAP
+
+std::string SDP::OBEX::getSupportedFormatsString(BYTE data_arr[], int size)
+{
+	std::string temp = "";
+
+	for(int aa = 0; aa < size; aa++)
+		switch (data_arr[aa])
+		{
+			case 0x01:
+				temp += "vCard 2.1\n";
+			break;
+
+			case 0x02:
+				temp += "vCard 3.0\n";
+				break;
+
+			case 0x03:
+				temp += "vCal 1.0\n";
+				break;
+
+			case 0x04:
+				temp += "iCal 2.0\n";
+				break;
+
+			case 0x05:
+				temp += "vNote\n";
+				break;
+
+			case 0x06:
+				temp += "vMessage\n";
+				break;
+
+			case 0xff:
+				temp += "any type of object\n";
+				break;
+		};
+
+	return temp;
+}
+
+int SDP::OBEX::getAndParse_SERVICE_VERSION_OBEX(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+{
+	printf("\n\n*** getAndParse_SERVICE_VERSION_OBEX ***\n");
+
+	BYTE bssr_response[5000]{ 0 };
+
+	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::OBEX::ServiceVersion, SDP::OBEX::ServiceVersion, bssr_response, 5000);
+
+	if (test)
+	{
+		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
+
+		SDP::FUNCTIONS::printResponse(bssr_response);
+
+		SDP::OBEX::SERVICE_VERSION* service_version_handle = new SDP::OBEX::SERVICE_VERSION();
+
+		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::OBEX::SERVICE_VERSION*, BYTE[]>(service_version_handle, bssr_response, 5000);
+
+
+		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::OBEX::SERVICE_VERSION*, BYTE[]>(service_version_handle, bssr_response, 5000, position);
+
+		// TODO: najdi neki primer zaradi parsanja
+		
+		service_version_handle->print<SERVICE_VERSION::VV>(service_version_handle->VALUE);
+
+		return 1;
+	}
+
+	return 0;
+}
+
+int SDP::OBEX::getAndParse_SUPPORTED_FORMATS_LIST_OBEX(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+{
+	printf("\n\n*** getAndParse_SUPPORTED_FORMATS_LIST_OBEX ***\n");
+
+	BYTE bssr_response[5000]{ 0 };
+
+	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::OBEX::SupportedFormatsList, SDP::OBEX::SupportedFormatsList, bssr_response, 5000);
+
+	if (test)
+	{
+		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
+
+		SDP::FUNCTIONS::printResponse(bssr_response);
+
+		SDP::OBEX::SUPPORTED_FORMATS* supported_formats_handle = new SDP::OBEX::SUPPORTED_FORMATS();
+
+		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::OBEX::SUPPORTED_FORMATS*, BYTE[]>(supported_formats_handle, bssr_response, 5000);
+
+
+		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::OBEX::SUPPORTED_FORMATS*, BYTE[]>(supported_formats_handle, bssr_response, 5000, position);
+
+		supported_formats_handle->VALUE.num_of_formats = supported_formats_handle->VALUE.size_bytes / 2;
+
+		supported_formats_handle->VALUE.formats = new BYTE[supported_formats_handle->VALUE.num_of_formats]();
+
+		for (int aa = 1, bb = 0; aa < supported_formats_handle->VALUE.size_bytes; aa += 2, bb++)
+		{
+			supported_formats_handle->VALUE.formats[bb] = supported_formats_handle->VALUE.value[aa];
+		}
+		supported_formats_handle->print<SUPPORTED_FORMATS::VV>(supported_formats_handle->VALUE);
+
+		return 1;
+	}
+
+	return 0;
+}
+
+
+
+/*********************************************************************************************************************/
+/* HFP SPECIFIC */
+
+
+int SDP::HFP::getAndParse_NETWORK_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+{
+	printf("\n\n*** getAndParse_NETWORK_HFP ***\n");
+
+	BYTE bssr_response[5000]{ 0 };
+
+	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::HFP::Network, SDP::HFP::Network, bssr_response, 5000);
+
+	if (test)
+	{
+		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
+
+		SDP::FUNCTIONS::printResponse(bssr_response);
+
+		SDP::HFP::NETWORK* network_handle = new SDP::HFP::NETWORK();
+
+		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::HFP::NETWORK*, BYTE[]>(network_handle, bssr_response, 5000);
+
+		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::HFP::NETWORK*, BYTE[]>(network_handle, bssr_response, 5000, position);
+
+		network_handle->print<NETWORK::VV>(network_handle->VALUE);
+
+		return 1;
+	}
+
+	return 0;
+}
+
+int SDP::HFP::getAndParse_SUPPORTED_FEATURES_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+{
+	printf("\n\n*** getAndParse_SUPPORTED_FEATURES_HFP ***\n");
+
+	BYTE bssr_response[5000]{ 0 };
+
+	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::HFP::SupportedFeatures, SDP::HFP::SupportedFeatures, bssr_response, 5000);
+
+	if (test)
+	{
+		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
+
+		SDP::FUNCTIONS::printResponse(bssr_response);
+
+		SDP::HFP::SUPPORTED_FEATURES* supported_features_handle = new SDP::HFP::SUPPORTED_FEATURES();
+
+		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::HFP::SUPPORTED_FEATURES*, BYTE[]>(supported_features_handle, bssr_response, 5000);
+
+
+		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::HFP::SUPPORTED_FEATURES*, BYTE[]>(supported_features_handle, bssr_response, 5000, position);
+
+		SHORT temp = 0x00;
+
+		temp |= supported_features_handle->VALUE.value[0];
+		temp <<= 8;
+		temp |= supported_features_handle->VALUE.value[1];
+
+
+		supported_features_handle->VALUE.supported_features_value = temp;
+
+		supported_features_handle->VALUE.sfds = new SUPPORTED_FEATURES_DATA_S(&temp);
+
+		supported_features_handle->print<SUPPORTED_FEATURES::VV>(supported_features_handle->VALUE);
+
+		return 1;
+	}
+
+	return 0;
+}
+
+
+
+/*********************************************************************************************************************/
+/* PNPINFO SPECIFIC */
+
+int SDP::PNPINFO::getAndParse_SPECIFICATION_ID_PNPINFO(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+{
+	printf("\n\n*** getAndParse_SPECIFICATION_ID_PNPINFO ***\n");
+
+	BYTE bssr_response[5000]{ 0 };
+	SDP::PNPINFO::INFO* ttt_handle = new SDP::PNPINFO::INFO();
+
+	BOOL test = FALSE;
+
+	for (SHORT bb = SpecificationID; bb < (VendorIDSource + 0x01); bb++)
+	{
+		printf("0x%04X\n",bb);
+
+		test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, bb, bb, bssr_response, 5000);
+
+		if (test)
+		{
+			printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
+
+			SDP::FUNCTIONS::printResponse(bssr_response);
+			int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::PNPINFO::INFO*, BYTE[]>(ttt_handle, bssr_response, 5000);
+
+			position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::PNPINFO::INFO*, BYTE[]>(ttt_handle, bssr_response, 5000, position);
+
+			if (bb == PrimaryRecord)
+			{
+				ttt_handle->setIDdata<BOOL>(bb, ttt_handle->VALUE.value[0]);
+			}
+			else
+			{
+				SHORT temp = 0x00;
+				temp |= ttt_handle->VALUE.value[0];
+				temp <<= 8;
+				temp |= ttt_handle->VALUE.value[1];
+				ttt_handle->setIDdata<SHORT>(bb, temp);
+			}
+		}
+	}
+
+	ttt_handle->print<INFO_S::VV>(ttt_handle->VALUE);
+
+	return 1;
+}
+
+
+
+/*********************************************************************************************************************/
+/* A2DP SPECIFIC */
+
+int SDP::A2DP::getAndParse_SUPPORTED_FEATURES_A2DP(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+{
+	printf("\n\n*** getAndParse_SUPPORTED_FEATURES_A2DP ***\n");
+
+	BYTE bssr_response[5000]{ 0 };
+
+	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::A2DP::SupportedFeatures, SDP::A2DP::SupportedFeatures, bssr_response, 5000);
+
+	if (test)
+	{
+		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
+
+		SDP::FUNCTIONS::printResponse(bssr_response);
+
+		SDP::A2DP::SUPPORTED_FEATURES* supported_features_handle = new SDP::A2DP::SUPPORTED_FEATURES();
+
+		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::A2DP::SUPPORTED_FEATURES*, BYTE[]>(supported_features_handle, bssr_response, 5000);
+
+
+		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::A2DP::SUPPORTED_FEATURES*, BYTE[]>(supported_features_handle, bssr_response, 5000, position);
+
+		
+		SHORT temp = 0x00;
+		temp |= supported_features_handle->VALUE.value[0];
+		temp <<= 8;
+		temp |= supported_features_handle->VALUE.value[1];
+
+		supported_features_handle->VALUE.supported_features_value = temp;
+
+		supported_features_handle->VALUE.sfds = new SUPPORTED_FEATURES_DATA_S(&supported_features_handle->VALUE.supported_features_value);
+
+
+		supported_features_handle->print<SUPPORTED_FEATURES::VV>(supported_features_handle->VALUE);
 
 		return 1;
 	}
@@ -1440,14 +1764,83 @@ int SDP::PBAP::getAndParse_PBAP_SUPPORTED_FEATURES_PBAP(ULONG recordHandle, HAND
 
 
 
+/*********************************************************************************************************************/
+/* AVRCP SPECIFIC */
+
+
+int SDP::AVRCP::getAndParse_SUPPORTED_FEATURES_AVRCP(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+{
+	printf("\n\n*** getAndParse_SUPPORTED_FEATURES_AVRCP ***\n");
+
+	BYTE bssr_response[5000]{ 0 };
+
+	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::AVRCP::SupportedFeatures, SDP::AVRCP::SupportedFeatures, bssr_response, 5000);
+
+	if (test)
+	{
+		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
+
+		SDP::FUNCTIONS::printResponse(bssr_response);
+
+		SDP::AVRCP::SUPPORTED_FEATURES* supported_features_handle = new SDP::AVRCP::SUPPORTED_FEATURES();
+
+		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::AVRCP::SUPPORTED_FEATURES*, BYTE[]>(supported_features_handle, bssr_response, 5000);
+
+
+		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::AVRCP::SUPPORTED_FEATURES*, BYTE[]>(supported_features_handle, bssr_response, 5000, position);
+
+		SHORT temp = 0x00;
+
+		temp |= supported_features_handle->VALUE.value[0];
+		temp <<= 8;
+		temp |= supported_features_handle->VALUE.value[1];
+
+
+		supported_features_handle->VALUE.supported_features_value = temp;
+
+		supported_features_handle->VALUE.sfds = new SUPPORTED_FEATURES_DATA_S(&temp);
+
+		supported_features_handle->print<SUPPORTED_FEATURES::VV>(supported_features_handle->VALUE);
+
+		return 1;
+	}
+
+	return 0;
+}
 
 
 
+/*********************************************************************************************************************/
+/* HSP SPECIFIC */
 
 
+int SDP::HSP::getAndParse_REMOTE_AUDIO_VOLUME_CONTROL_HSP(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+{
+	printf("\n\n*** getAndParse_REMOTE_AUDIO_VOLUME_CONTROL_HSP ***\n");
+
+	BYTE bssr_response[5000]{ 0 };
+
+	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::HSP::RemoteAudioVolumeControl, SDP::HSP::RemoteAudioVolumeControl, bssr_response, 5000);
+
+	if (test)
+	{
+		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
+
+		SDP::FUNCTIONS::printResponse(bssr_response);
+
+		SDP::HSP::REMOTE_AUDIO_VOLUME_CONTROL* remote_audio_volume_control_handle = new SDP::HSP::REMOTE_AUDIO_VOLUME_CONTROL();
+
+		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::HSP::REMOTE_AUDIO_VOLUME_CONTROL*, BYTE[]>(remote_audio_volume_control_handle, bssr_response, 5000);
 
 
+		position = FUNCTIONS::set_save_VALUE_ELEMENT<SDP::HSP::REMOTE_AUDIO_VOLUME_CONTROL*, BYTE[]>(remote_audio_volume_control_handle, bssr_response, 5000, position);
 
 
+		remote_audio_volume_control_handle->print<REMOTE_AUDIO_VOLUME_CONTROL::VV>(remote_audio_volume_control_handle->VALUE);
 
+		return 1;
+	}
+
+	return 0;
+}
 
