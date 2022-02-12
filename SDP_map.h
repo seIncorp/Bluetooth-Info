@@ -93,10 +93,12 @@ namespace SDP
 				printVALUE_ELEMENT(v);
 
 				printf("GoepL2CapPsm value: 0x%04X\n", v.GoepL2CapPsm_value);
+
+				printf("\n");
 			}
 
 
-		} GOEPL2CAPPSM, * PGOEPL2CAPPSM;
+		} GOEPL2CAPPSM, *PGOEPL2CAPPSM;
 
 		typedef struct SUPPORTED_MESSAGE_TYPES_S : DEFAULT_OBJECT
 		{
@@ -114,6 +116,8 @@ namespace SDP
 				printVALUE_ELEMENT(v);
 
 				printf("Message types: \n%s\n", getMessageTypesString(VALUE.sfm).c_str());
+
+				printf("\n");
 			}
 
 
@@ -135,6 +139,8 @@ namespace SDP
 				printVALUE_ELEMENT(v);
 
 				printf("MAS instance ID: 0x%02X\n", v.instance_ID);
+
+				printf("\n");
 			}
 
 		} MAS_INSTANCE_ID, * PMAS_INSTANCE_ID;
@@ -155,17 +161,59 @@ namespace SDP
 				printVALUE_ELEMENT(v);
 
 				printf("Features: \n%s\n", getSupportedFeaturesString(v.sfm).c_str());
+				printf("\n");
 			}
 
 		} MAP_SUPPORTED_FEATURES, * PMAP_SUPPORTED_FEATURES;
 
 
-		int getAndParse_GOEPL2CAPPSM_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
-		int getAndParse_SUPPORTED_MESSAGE_TYPES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
-		int getAndParse_MAS_INSTANCE_ID_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
-		int getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		int getAndParse_GOEPL2CAPPSM_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa, PGOEPL2CAPPSM goepl2cappsm_handle = new GOEPL2CAPPSM(), int print = 1);
+		int getAndParse_SUPPORTED_MESSAGE_TYPES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa, PSUPPORTED_MESSAGE_TYPES supported_message_types_handle = new SUPPORTED_MESSAGE_TYPES(), int print = 1);
+		int getAndParse_MAS_INSTANCE_ID_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa, PMAS_INSTANCE_ID mas_instance_id_handle = new MAS_INSTANCE_ID(), int print = 1);
+		int getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa, PMAP_SUPPORTED_FEATURES map_supported_features_handle = new MAP_SUPPORTED_FEATURES(), int print = 1);
 
-		int getAllFeatures_data_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		
+
+
+		class MAP_all_attributes
+		{
+			public:
+
+				/* default */
+				PDEFAULT_OBJECT record_handle;
+				PSERVICE_CLASS_ID_LIST class_id_handle;
+				PPROTOCOL_DESCRIPTOR_LIST protocol_descriptor_list_handle;
+				PSERVICE_NAME service_name_handle;
+				PBLUETOOTH_PROFILE_DESCRIPTOR_LIST bluetooth_profile_descriptor_list_handle;
+
+				/* specific */
+				PGOEPL2CAPPSM goepl2cappsm_handle;
+				PSUPPORTED_MESSAGE_TYPES supported_message_types_handle;
+				PMAS_INSTANCE_ID mas_instance_id_handle;
+				PMAP_SUPPORTED_FEATURES map_supported_features_handle;
+
+
+
+				MAP_all_attributes();
+
+				void call_ALL_ATTR(DEVICE_DATA_SDP* device_data_sdp);
+				void print_ALL_ATTR();
+
+
+			private:
+				SHORT att_array[9]{
+					ServiceRecordHandle,
+					ServiceClassIDList,
+					ProtocolDescriptorList,
+					ServiceName,
+					BluetoothProfileDescriptorList,
+					MAP::GoepL2capPsm,
+					MAP::MASInstanceID,
+					MAP::SupportedMessageTypes,
+					MAP::MapSupportedFeatures
+				};
+
+		};
 	};
 
 };

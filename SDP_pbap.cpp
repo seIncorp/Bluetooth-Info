@@ -12,7 +12,7 @@ int SDP::PBAP::getAndParse_SUPPORTED_REPOSITORIES_PBAP(ULONG recordHandle, HANDL
 
 	BYTE bssr_response[5000]{ 0 };
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::PBAP::SupportedRepositories, SDP::PBAP::SupportedRepositories, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::PBAP::SupportedRepositories, SDP::PBAP::SupportedRepositories, bssr_response, 5000);
 
 	if (test)
 	{
@@ -42,7 +42,7 @@ int SDP::PBAP::getAndParse_PBAP_SUPPORTED_FEATURES_PBAP(ULONG recordHandle, HAND
 
 	BYTE bssr_response[5000]{ 0 };
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::PBAP::PbapSupportedFeatures, SDP::PBAP::PbapSupportedFeatures, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::PBAP::PbapSupportedFeatures, SDP::PBAP::PbapSupportedFeatures, bssr_response, 5000);
 
 	if (test)
 	{

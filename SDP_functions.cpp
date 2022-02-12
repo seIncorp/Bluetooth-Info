@@ -1,7 +1,9 @@
 ﻿#include "main.h"
 
 
-int SDP::FUNCTIONS::getElementSize(BYTE size, int* add_bits)
+
+
+int SDP::SUB_FUNCTIONS::getElementSize(BYTE size, int* add_bits)
 {
 	switch (size)
 	{
@@ -47,7 +49,7 @@ int SDP::FUNCTIONS::getElementSize(BYTE size, int* add_bits)
 	}
 }
 
-std::string SDP::FUNCTIONS::getElementTypeString(BYTE type)
+std::string SDP::SUB_FUNCTIONS::getElementTypeString(BYTE type)
 {
 	std::string temp;
 
@@ -93,7 +95,7 @@ std::string SDP::FUNCTIONS::getElementTypeString(BYTE type)
 	return temp;
 }
 
-std::string SDP::FUNCTIONS::getProtocolTypeString(SHORT type)
+std::string SDP::SUB_FUNCTIONS::getProtocolTypeString(SHORT type)
 {
 	std::string temp;
 
@@ -183,7 +185,7 @@ std::string SDP::FUNCTIONS::getProtocolTypeString(SHORT type)
 	return temp;
 }
 
-std::string SDP::FUNCTIONS::getNetworkPacketTypeString(SHORT type)
+std::string SDP::SUB_FUNCTIONS::getNetworkPacketTypeString(SHORT type)
 {
 	std::string temp;
 
@@ -210,7 +212,11 @@ std::string SDP::FUNCTIONS::getNetworkPacketTypeString(SHORT type)
 }
 
 
-void SDP::FUNCTIONS::init_for_IOCTL_BTH_SDP_CONNECT(char add[], DEVICE_DATA_SDP* device_data_sdp)
+
+
+
+
+void SDP::FUNCTIONS::SDP_INIT_CONNECT::init_for_IOCTL_BTH_SDP_CONNECT(char add[], DEVICE_DATA_SDP* device_data_sdp)
 {
 	device_data_sdp->btaddr = new BTH_ADDR();
 
@@ -220,36 +226,58 @@ void SDP::FUNCTIONS::init_for_IOCTL_BTH_SDP_CONNECT(char add[], DEVICE_DATA_SDP*
 
 	device_data_sdp->bsc->bthAddress = *(device_data_sdp->btaddr);
 
+	dd.bResult = FALSE;
+	dd.junk = 0;
 }
 
-void SDP::FUNCTIONS::call_IOCTL_BTH_SDP_CONNECT(DEVICE_DATA_SDP* device_data_sdp)
+int SDP::FUNCTIONS::SDP_INIT_CONNECT::call_IOCTL_BTH_SDP_CONNECT(DEVICE_DATA_SDP* device_data_sdp)
 {
-	dd.bResult = DeviceIoControl(
-		dd.hDevice, // device to be queried
-		IOCTL_BTH_SDP_CONNECT, // operation to perform
+	device_data_sdp->bResult = DeviceIoControl(
+		dd.hDevice,												// device to be queried
+		IOCTL_BTH_SDP_CONNECT,									// operation to perform
+		device_data_sdp->bsc, sizeof(*device_data_sdp->bsc),	// no input buffer
+		device_data_sdp->bsc, sizeof(*device_data_sdp->bsc),    // output buffer
+		&dd.junk,												// # bytes returned
+		(LPOVERLAPPED)NULL										// synchronous I/O
+	);
 
-		device_data_sdp->bsc, sizeof(*device_data_sdp->bsc),                       // no input buffer
+	IOCTL_S::printErrorMessage(GetLastError());
 
-		device_data_sdp->bsc, sizeof(*device_data_sdp->bsc),             // output buffer
-
-		&dd.junk,                         // # bytes returned
-		(LPOVERLAPPED)NULL);          // synchronous I/O
-
-	DWORD err = GetLastError();
-	printErrorMessage(err);
-	//
-	printf("-- %d\n", dd.junk);
-	
+	return device_data_sdp->bResult;
 }
 
-void SDP::FUNCTIONS::call_IOCTL_BTH_SDP_SERVICE_SEARCH()
+
+void SDP::FUNCTIONS::SDP_SERVICE_SEARCH::init_for_IOCTL_BTH_SDP_SERVICE_SEARCH(DEVICE_DATA_SDP* device_data_sdp)
 {
+	// TODO: preveri ali je res tole uporabno
+	dd.service_class_id_in_use = device_data_sdp->current_used_service;
+
+	device_data_sdp->bsssr = new BTH_SDP_SERVICE_SEARCH_REQUEST();
+	device_data_sdp->bsssr->HANDLE_SDP_FIELD_NAME = device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME;
+	device_data_sdp->bsssr->uuids[0].u.uuid16 = device_data_sdp->current_used_service;
+	device_data_sdp->bsssr->uuids[0].uuidType = SDP_ST_UUID16;
 
 
 }
 
+int SDP::FUNCTIONS::SDP_SERVICE_SEARCH::call_IOCTL_BTH_SDP_SERVICE_SEARCH(DEVICE_DATA_SDP* device_data_sdp)
+{
+	device_data_sdp->sdp_service_search_res = DeviceIoControl(
+		dd.hDevice,															// device to be queried
+		IOCTL_BTH_SDP_SERVICE_SEARCH,										// operation to perform
+		device_data_sdp->bsssr, sizeof(*device_data_sdp->bsssr),            // no input buffer
+		device_data_sdp->buffer_res, sizeof(device_data_sdp->buffer_res),   // output buffer
+		&dd.junk,															// # bytes returned
+		(LPOVERLAPPED)NULL												// synchronous I/O
+	);
 
-BOOL SDP::FUNCTIONS::call_IOCTL_BTH_SDP_ATTRIBUTE_SEARCH(BTH_SDP_ATTRIBUTE_SEARCH_REQUEST* bsasr, BYTE bssr_response[], int res_length)
+	IOCTL_S::printErrorMessage(GetLastError());
+
+	return device_data_sdp->sdp_service_search_res;
+}
+
+
+BOOL SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::call_IOCTL_BTH_SDP_ATTRIBUTE_SEARCH(BTH_SDP_ATTRIBUTE_SEARCH_REQUEST* bsasr, BYTE bssr_response[], int res_length)
 {
 	BOOL test_sdp_call_222;
 
@@ -265,14 +293,14 @@ BOOL SDP::FUNCTIONS::call_IOCTL_BTH_SDP_ATTRIBUTE_SEARCH(BTH_SDP_ATTRIBUTE_SEARC
 		(LPOVERLAPPED)NULL);          // synchronous I/O
 
 	DWORD err = GetLastError();
-	printErrorMessage(err);
+	IOCTL_S::printErrorMessage(err);
 
 	printf("-- %d\n", dd.junk);
 
 	return test_sdp_call_222;
 }
 
-BOOL SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(ULONG recordHandle, HANDLE_SDP_TYPE aa, USHORT minAttr, USHORT maxAttr, BYTE res[], int res_length)
+BOOL SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(ULONG recordHandle, HANDLE_SDP_TYPE aa, USHORT minAttr, USHORT maxAttr, BYTE res[], int res_length)
 {
 	BTH_SDP_ATTRIBUTE_SEARCH_REQUEST* bsasr = new BTH_SDP_ATTRIBUTE_SEARCH_REQUEST();
 	bsasr->HANDLE_SDP_FIELD_NAME = aa;
@@ -283,10 +311,43 @@ BOOL SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(ULONG recordHandle, H
 	//BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
 	BOOL test_sdp_call_222 = false;
-	test_sdp_call_222 = SDP::FUNCTIONS::call_IOCTL_BTH_SDP_ATTRIBUTE_SEARCH(bsasr, res, res_length);
+	test_sdp_call_222 = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::call_IOCTL_BTH_SDP_ATTRIBUTE_SEARCH(bsasr, res, res_length);
 
 	return test_sdp_call_222;
 }
+
+
+void SDP::FUNCTIONS::SDP_INIT_DISCONNECT::init_for_IOCTL_BTH_SDP_DISCONNECT(DEVICE_DATA_SDP* device_data_sdp)
+{
+	device_data_sdp->bsd = new BTH_SDP_DISCONNECT();
+	device_data_sdp->bsd->HANDLE_SDP_FIELD_NAME = device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME;
+}
+
+int SDP::FUNCTIONS::SDP_INIT_DISCONNECT::call_IOCTL_BTH_SDP_DISCONNECT(DEVICE_DATA_SDP* device_data_sdp)
+{
+	device_data_sdp->disconnection_res = DeviceIoControl(
+		dd.hDevice,												// device to be queried
+		IOCTL_BTH_SDP_DISCONNECT,								// operation to perform
+		device_data_sdp->bsd, sizeof(*device_data_sdp->bsd),	// no input buffer
+		NULL, 0,												// output buffer
+		&dd.junk,												// # bytes returned
+		(LPOVERLAPPED)NULL										// synchronous I/O
+	);
+
+	IOCTL_S::printErrorMessage(GetLastError());
+
+	if (device_data_sdp->disconnection_res)
+	{
+		printf("DISCONNECTED FROM DEVICE!!\n");
+
+		return 1;
+	}
+
+	return 0;
+}
+
+
+
 
 
 void SDP::FUNCTIONS::printResponse(BYTE bssr_response[])
@@ -311,14 +372,26 @@ void SDP::FUNCTIONS::printResponse(BYTE bssr_response[])
 
 
 
+/*
+	TODO:
 
-int SDP::FUNCTIONS::getAndParse_SERVICE_RECORD_HANDLE(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+	razmisli kako bi zmanjsal kodo za spodnje funkcije
+
+	ker prvih 6 vrstic so vedno iste
+
+	npr. s template in se potem klice posamezno funkcijo na podlagi kateri service je
+
+*/
+
+
+
+int SDP::FUNCTIONS::getAndParse_SERVICE_RECORD_HANDLE(ULONG recordHandle, HANDLE_SDP_TYPE aa, PDEFAULT_OBJECT record_handle, int print)
 {
 	printf("\n\n*** getAndParse_SERVICE_RECORD_HANDLE ***\n");
 
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceRecordHandle, SDP::ServiceRecordHandle, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceRecordHandle, SDP::ServiceRecordHandle, bssr_response, 5000);
 
 	if (test)
 	{
@@ -326,13 +399,14 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_RECORD_HANDLE(ULONG recordHandle, HANDLE
 
 		printResponse(bssr_response);
 
-		SDP::PDEFAULT_OBJECT record_handle = new SDP::DEFAULT_OBJECT();
+		//SDP::PDEFAULT_OBJECT record_handle = new SDP::DEFAULT_OBJECT();
 
 		int position = set_save_ATTRIBUTE_ELEMENT<PDEFAULT_OBJECT, BYTE[]>(record_handle, bssr_response, 5000);
 
 		position = set_save_VALUE_ELEMENT<PDEFAULT_OBJECT, BYTE[]>(record_handle, bssr_response, 5000, position);
 
-		record_handle->print(record_handle->VALUE);
+		if(print == 1)
+			record_handle->print(record_handle->VALUE);
 
 		return 1;
 	}
@@ -340,13 +414,13 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_RECORD_HANDLE(ULONG recordHandle, HANDLE
 	return 0;
 }
 
-int SDP::FUNCTIONS::getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+int SDP::FUNCTIONS::getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa, PSERVICE_CLASS_ID_LIST class_id_handle, int print)
 {
 	printf("*** getAndParse_SERVICE_CLASS_ID_LIST ***\n");
 
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceClassIDList, SDP::ServiceClassIDList, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceClassIDList, SDP::ServiceClassIDList, bssr_response, 5000);
 
 	if (test)
 	{
@@ -355,7 +429,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE
 		printResponse(bssr_response);
 
 
-		SDP::PSERVICE_CLASS_ID_LIST class_id_handle = new SDP::SERVICE_CLASS_ID_LIST();
+		//SDP::PSERVICE_CLASS_ID_LIST class_id_handle = new SDP::SERVICE_CLASS_ID_LIST();
 
 		int position = set_save_ATTRIBUTE_ELEMENT<PSERVICE_CLASS_ID_LIST, BYTE[]>(class_id_handle, bssr_response, 5000);
 
@@ -379,14 +453,16 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE
 
 			class_id_handle->VALUE.classes[b].element = temp_att_id;
 
-			int temp_size_1 = SDP::FUNCTIONS::getElementSize(class_id_handle->VALUE.classes[b].element->element.size, &(class_id_handle->VALUE.classes[b].additional_bits_flag));
+			int temp_size_1 = SDP::SUB_FUNCTIONS::getElementSize(class_id_handle->VALUE.classes[b].element->element.size, &(class_id_handle->VALUE.classes[b].additional_bits_flag));
 
 			class_id_handle->VALUE.classes[b].value |= *(class_id_handle->VALUE.value + a + 1);
 			class_id_handle->VALUE.classes[b].value <<= 8;
 			class_id_handle->VALUE.classes[b].value |= *(class_id_handle->VALUE.value + a + 2);
 		}
 
-		class_id_handle->print<SERVICE_CLASS_ID_LIST_S::VV>(class_id_handle->VALUE);
+
+		if (print == 1)
+			class_id_handle->print<SERVICE_CLASS_ID_LIST_S::VV>(class_id_handle->VALUE);
 
 		return 1;
 	}
@@ -394,13 +470,13 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_CLASS_ID_LIST(ULONG recordHandle, HANDLE
 	return 0;
 }
 
-int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa, PPROTOCOL_DESCRIPTOR_LIST protocol_descriptor_list_handle, int print)
 {
 	printf("\n\n*** getAndParse_PROTOCOL_DESCRIPTOR_LIST ***\n");
 
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ProtocolDescriptorList, SDP::ProtocolDescriptorList, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ProtocolDescriptorList, SDP::ProtocolDescriptorList, bssr_response, 5000);
 
 	if (test)
 	{
@@ -409,7 +485,7 @@ int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HAN
 		printResponse(bssr_response);
 
 
-		SDP::PROTOCOL_DESCRIPTOR_LIST* protocol_descriptor_list_handle = new SDP::PROTOCOL_DESCRIPTOR_LIST();
+		//SDP::PROTOCOL_DESCRIPTOR_LIST* protocol_descriptor_list_handle = new SDP::PROTOCOL_DESCRIPTOR_LIST();
 
 		int position = set_save_ATTRIBUTE_ELEMENT<PROTOCOL_DESCRIPTOR_LIST*, BYTE[]>(protocol_descriptor_list_handle, bssr_response, 5000);
 
@@ -439,7 +515,7 @@ int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HAN
 
 				protocol_descriptor_list_handle->VALUE.protocols[b].element = temp_att_id;
 
-				int temp_size_v_1 = SDP::FUNCTIONS::getElementSize(protocol_descriptor_list_handle->VALUE.protocols[b].element->element.size, &(protocol_descriptor_list_handle->VALUE.protocols[b].additional_bits_flag));
+				int temp_size_v_1 = SDP::SUB_FUNCTIONS::getElementSize(protocol_descriptor_list_handle->VALUE.protocols[b].element->element.size, &(protocol_descriptor_list_handle->VALUE.protocols[b].additional_bits_flag));
 
 				if (protocol_descriptor_list_handle->VALUE.additional_bits_flag == 1)
 				{
@@ -531,7 +607,7 @@ int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HAN
 							{
 								protocol_descriptor_list_handle->VALUE.protocols[c].pdsp->element_PANU = (SDP::ATTRIBUTE_ID_ELEMENT*)(protocol_descriptor_list_handle->VALUE.protocols[c].value + cc);
 
-								int temp_size_BNEP = SDP::FUNCTIONS::getElementSize(protocol_descriptor_list_handle->VALUE.protocols[c].pdsp->element_PANU->element.size, &(protocol_descriptor_list_handle->VALUE.protocols[c].pdsp->additional_bits_flag_PANU));
+								int temp_size_BNEP = SDP::SUB_FUNCTIONS::getElementSize(protocol_descriptor_list_handle->VALUE.protocols[c].pdsp->element_PANU->element.size, &(protocol_descriptor_list_handle->VALUE.protocols[c].pdsp->additional_bits_flag_PANU));
 								protocol_descriptor_list_handle->VALUE.protocols[c].pdsp->additional_bits_for_size_PANU = temp_size_BNEP;
 
 								if (protocol_descriptor_list_handle->VALUE.protocols[c].pdsp->additional_bits_flag_PANU)
@@ -582,7 +658,8 @@ int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HAN
 
 		}
 
-		protocol_descriptor_list_handle->print<PROTOCOL_DESCRIPTOR_LIST::VV>(protocol_descriptor_list_handle->VALUE);
+		if (print == 1)
+			protocol_descriptor_list_handle->print<PROTOCOL_DESCRIPTOR_LIST::VV>(protocol_descriptor_list_handle->VALUE);
 
 		return 1;
 	}
@@ -590,13 +667,13 @@ int SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(ULONG recordHandle, HAN
 	return 0;
 }
 
-int SDP::FUNCTIONS::getAndParse_SERVICE_NAME(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+int SDP::FUNCTIONS::getAndParse_SERVICE_NAME(ULONG recordHandle, HANDLE_SDP_TYPE aa, PSERVICE_NAME service_name_handle, int print)
 {
 	printf("\n\n*** getAndParse_SERVICE_NAME ***\n");
 
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceName, SDP::ServiceName, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceName, SDP::ServiceName, bssr_response, 5000);
 
 	if (test)
 	{
@@ -604,7 +681,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_NAME(ULONG recordHandle, HANDLE_SDP_TYPE
 
 		printResponse(bssr_response);
 
-		SDP::SERVICE_NAME* service_name_handle = new SDP::SERVICE_NAME();
+		//SDP::SERVICE_NAME* service_name_handle = new SDP::SERVICE_NAME();
 
 		int position = set_save_ATTRIBUTE_ELEMENT<SERVICE_NAME*, BYTE[]>(service_name_handle, bssr_response, 5000);
 
@@ -614,7 +691,8 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_NAME(ULONG recordHandle, HANDLE_SDP_TYPE
 		service_name_handle->VALUE.service_name = new char[service_name_handle->VALUE.size_bytes]();
 		memcpy(service_name_handle->VALUE.service_name, service_name_handle->VALUE.value, service_name_handle->VALUE.size_bytes);
 
-		service_name_handle->print<SERVICE_NAME::VV>(service_name_handle->VALUE);
+		if (print == 1)
+			service_name_handle->print<SERVICE_NAME::VV>(service_name_handle->VALUE);
 
 		return 1;
 	}
@@ -622,13 +700,13 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_NAME(ULONG recordHandle, HANDLE_SDP_TYPE
 	return 0;
 }
 
-int SDP::FUNCTIONS::getAndParse_PROVIDER_NAME(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+int SDP::FUNCTIONS::getAndParse_PROVIDER_NAME(ULONG recordHandle, HANDLE_SDP_TYPE aa, PPROVIDER_NAME provider_name_handle, int print)
 {
 	printf("\n\n*** getAndParse_PROVIDER_NAME ***\n");
 
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ProviderName, SDP::ProviderName, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ProviderName, SDP::ProviderName, bssr_response, 5000);
 
 	if (test)
 	{
@@ -636,7 +714,7 @@ int SDP::FUNCTIONS::getAndParse_PROVIDER_NAME(ULONG recordHandle, HANDLE_SDP_TYP
 
 		printResponse(bssr_response);
 
-		SDP::PROVIDER_NAME* provider_name_handle = new SDP::PROVIDER_NAME();
+		//SDP::PROVIDER_NAME* provider_name_handle = new SDP::PROVIDER_NAME();
 
 		int position = set_save_ATTRIBUTE_ELEMENT<PROVIDER_NAME*, BYTE[]>(provider_name_handle, bssr_response, 5000);
 
@@ -646,7 +724,8 @@ int SDP::FUNCTIONS::getAndParse_PROVIDER_NAME(ULONG recordHandle, HANDLE_SDP_TYP
 		provider_name_handle->VALUE.provider_name = new char[provider_name_handle->VALUE.size_bytes]();
 		memcpy(provider_name_handle->VALUE.provider_name, provider_name_handle->VALUE.value, provider_name_handle->VALUE.size_bytes);
 
-		provider_name_handle->print<PROVIDER_NAME::VV>(provider_name_handle->VALUE);
+		if (print == 1)
+			provider_name_handle->print<PROVIDER_NAME::VV>(provider_name_handle->VALUE);
 
 		return 1;
 	}
@@ -654,13 +733,13 @@ int SDP::FUNCTIONS::getAndParse_PROVIDER_NAME(ULONG recordHandle, HANDLE_SDP_TYP
 	return 0;
 }
 
-int SDP::FUNCTIONS::getAndParse_BLUETOOTH_PROFILE_DESCRIPTOR_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+int SDP::FUNCTIONS::getAndParse_BLUETOOTH_PROFILE_DESCRIPTOR_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa, PBLUETOOTH_PROFILE_DESCRIPTOR_LIST bluetooth_profile_descriptor_list_handle, int print)
 {
 	printf("\n\n*** getAndParse_BLUETOOTH_PROFILE_DESCRIPTOR_LIST ***\n");
 
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::BluetoothProfileDescriptorList, SDP::BluetoothProfileDescriptorList, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::BluetoothProfileDescriptorList, SDP::BluetoothProfileDescriptorList, bssr_response, 5000);
 
 	if (test)
 	{
@@ -669,7 +748,7 @@ int SDP::FUNCTIONS::getAndParse_BLUETOOTH_PROFILE_DESCRIPTOR_LIST(ULONG recordHa
 		printResponse(bssr_response);
 
 
-		SDP::BLUETOOTH_PROFILE_DESCRIPTOR_LIST* bluetooth_profile_descriptor_list_handle = new SDP::BLUETOOTH_PROFILE_DESCRIPTOR_LIST();
+		//SDP::BLUETOOTH_PROFILE_DESCRIPTOR_LIST* bluetooth_profile_descriptor_list_handle = new SDP::BLUETOOTH_PROFILE_DESCRIPTOR_LIST();
 
 		int position = set_save_ATTRIBUTE_ELEMENT<BLUETOOTH_PROFILE_DESCRIPTOR_LIST*, BYTE[]>(bluetooth_profile_descriptor_list_handle, bssr_response, 5000);
 
@@ -688,7 +767,8 @@ int SDP::FUNCTIONS::getAndParse_BLUETOOTH_PROFILE_DESCRIPTOR_LIST(ULONG recordHa
 		// TODO: popravi za primer ko jih je vec naenkrat
 
 
-		bluetooth_profile_descriptor_list_handle->print<BLUETOOTH_PROFILE_DESCRIPTOR_LIST::VV>(bluetooth_profile_descriptor_list_handle->VALUE);
+		if (print == 1)
+			bluetooth_profile_descriptor_list_handle->print<BLUETOOTH_PROFILE_DESCRIPTOR_LIST::VV>(bluetooth_profile_descriptor_list_handle->VALUE);
 
 
 		return 1;
@@ -698,13 +778,13 @@ int SDP::FUNCTIONS::getAndParse_BLUETOOTH_PROFILE_DESCRIPTOR_LIST(ULONG recordHa
 	return 0;
 }
 
-int SDP::FUNCTIONS::getAndParse_LANGUAGE_BASE_ATTRIBUTE_ID_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+int SDP::FUNCTIONS::getAndParse_LANGUAGE_BASE_ATTRIBUTE_ID_LIST(ULONG recordHandle, HANDLE_SDP_TYPE aa, PLANGUAGE_BASE_ATTRIBUTE_ID_LIST language_base_attribute_id_list_handle, int print)
 {
 	printf("\n\n*** getAndParse_LANGUAGE_BASE_ATTRIBUTE_ID_LIST ***\n");
 
 	BYTE bssr_response[5000]{ 0 };
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::LanguageBaseAttributeIDList, SDP::LanguageBaseAttributeIDList, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::LanguageBaseAttributeIDList, SDP::LanguageBaseAttributeIDList, bssr_response, 5000);
 
 	if (test)
 	{
@@ -713,7 +793,7 @@ int SDP::FUNCTIONS::getAndParse_LANGUAGE_BASE_ATTRIBUTE_ID_LIST(ULONG recordHand
 		printResponse(bssr_response);
 
 
-		SDP::LANGUAGE_BASE_ATTRIBUTE_ID_LIST* language_base_attribute_id_list_handle = new SDP::LANGUAGE_BASE_ATTRIBUTE_ID_LIST();
+		//SDP::LANGUAGE_BASE_ATTRIBUTE_ID_LIST* language_base_attribute_id_list_handle = new SDP::LANGUAGE_BASE_ATTRIBUTE_ID_LIST();
 
 		int position = set_save_ATTRIBUTE_ELEMENT<LANGUAGE_BASE_ATTRIBUTE_ID_LIST*, BYTE[]>(language_base_attribute_id_list_handle, bssr_response, 5000);
 
@@ -745,7 +825,8 @@ int SDP::FUNCTIONS::getAndParse_LANGUAGE_BASE_ATTRIBUTE_ID_LIST(ULONG recordHand
 		language_base_attribute_id_list_handle->VALUE.triplet_attribute_id <<= 8;
 		language_base_attribute_id_list_handle->VALUE.triplet_attribute_id |= language_base_attribute_id_list_handle->VALUE.value[8];
 
-		language_base_attribute_id_list_handle->print<LANGUAGE_BASE_ATTRIBUTE_ID_LIST::VV>(language_base_attribute_id_list_handle->VALUE);
+		if (print == 1)
+			language_base_attribute_id_list_handle->print<LANGUAGE_BASE_ATTRIBUTE_ID_LIST::VV>(language_base_attribute_id_list_handle->VALUE);
 
 		return 1;
 	}
@@ -759,7 +840,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_AVAILABILITY(ULONG recordHandle, HANDLE_
 
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceAvailability, SDP::ServiceAvailability, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceAvailability, SDP::ServiceAvailability, bssr_response, 5000);
 
 	if (test)
 	{
@@ -779,13 +860,13 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_AVAILABILITY(ULONG recordHandle, HANDLE_
 	return 0;
 }
 
-int SDP::FUNCTIONS::getAndParse_SERVICE_DESCRIPTION(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+int SDP::FUNCTIONS::getAndParse_SERVICE_DESCRIPTION(ULONG recordHandle, HANDLE_SDP_TYPE aa, PSERVICE_DESCRIPTION service_description_handle, int print)
 {
 	printf("\n\n*** getAndParse_SERVICE_DESCRIPTION ***\n");
 
 	BYTE bssr_response[5000]{ 0 };		// TODO: premisli
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceDescription, SDP::ServiceDescription, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::ServiceDescription, SDP::ServiceDescription, bssr_response, 5000);
 
 	if (test)
 	{
@@ -793,7 +874,7 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_DESCRIPTION(ULONG recordHandle, HANDLE_S
 
 		printResponse(bssr_response);
 
-		SDP::SERVICE_DESCRIPTION* service_description_handle = new SDP::SERVICE_DESCRIPTION();
+		//SDP::SERVICE_DESCRIPTION* service_description_handle = new SDP::SERVICE_DESCRIPTION();
 
 		int position = set_save_ATTRIBUTE_ELEMENT<SERVICE_DESCRIPTION*, BYTE[]>(service_description_handle, bssr_response, 5000);
 
@@ -803,7 +884,8 @@ int SDP::FUNCTIONS::getAndParse_SERVICE_DESCRIPTION(ULONG recordHandle, HANDLE_S
 		service_description_handle->VALUE.description = new char[service_description_handle->VALUE.size_bytes]();
 		memcpy(service_description_handle->VALUE.description, service_description_handle->VALUE.value, service_description_handle->VALUE.size_bytes);
 
-		service_description_handle->print<SERVICE_DESCRIPTION::VV>(service_description_handle->VALUE);
+		if (print == 1)
+			service_description_handle->print<SERVICE_DESCRIPTION::VV>(service_description_handle->VALUE);
 
 		return 1;
 	}

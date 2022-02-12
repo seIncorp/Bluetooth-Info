@@ -51,7 +51,7 @@ int SDP::OBEX::getAndParse_SERVICE_VERSION_OBEX(ULONG recordHandle, HANDLE_SDP_T
 
 	BYTE bssr_response[5000]{ 0 };
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::OBEX::ServiceVersion, SDP::OBEX::ServiceVersion, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::OBEX::ServiceVersion, SDP::OBEX::ServiceVersion, bssr_response, 5000);
 
 	if (test)
 	{
@@ -82,7 +82,7 @@ int SDP::OBEX::getAndParse_SUPPORTED_FORMATS_LIST_OBEX(ULONG recordHandle, HANDL
 
 	BYTE bssr_response[5000]{ 0 };
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::OBEX::SupportedFormatsList, SDP::OBEX::SupportedFormatsList, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::OBEX::SupportedFormatsList, SDP::OBEX::SupportedFormatsList, bssr_response, 5000);
 
 	if (test)
 	{

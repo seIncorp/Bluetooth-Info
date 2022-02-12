@@ -226,14 +226,25 @@ namespace SDP
 
 	typedef struct DEVICE_DATA_SDP_S
 	{
-		//char* address;
+		// for device
 		BTH_ADDR* btaddr;
-
 		BTH_SDP_CONNECT* bsc;
+		BOOL bResult;
+
+		// for service
+		BTH_SDP_SERVICE_SEARCH_REQUEST* bsssr;
+		ULONG buffer_res[1];
+		BOOL sdp_service_search_res;
+		SHORT current_used_service;
+
+		// for disconnection
+		BTH_SDP_DISCONNECT* bsd;
+		BOOL disconnection_res;
 
 
 	} DEVICE_DATA_SDP, *PDEVICE_DATA_SDP;
 
+	
 	
 };
 

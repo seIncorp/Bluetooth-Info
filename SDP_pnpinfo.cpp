@@ -18,7 +18,7 @@ int SDP::PNPINFO::getAndParse_SPECIFICATION_ID_PNPINFO(ULONG recordHandle, HANDL
 	{
 		printf("0x%04X\n", bb);
 
-		test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, bb, bb, bssr_response, 5000);
+		test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, bb, bb, bssr_response, 5000);
 
 		if (test)
 		{

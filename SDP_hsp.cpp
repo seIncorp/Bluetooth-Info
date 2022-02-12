@@ -13,7 +13,7 @@ int SDP::HSP::getAndParse_REMOTE_AUDIO_VOLUME_CONTROL_HSP(ULONG recordHandle, HA
 
 	BYTE bssr_response[5000]{ 0 };
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::HSP::RemoteAudioVolumeControl, SDP::HSP::RemoteAudioVolumeControl, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::HSP::RemoteAudioVolumeControl, SDP::HSP::RemoteAudioVolumeControl, bssr_response, 5000);
 
 	if (test)
 	{

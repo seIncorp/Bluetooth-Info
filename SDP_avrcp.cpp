@@ -13,7 +13,7 @@ int SDP::AVRCP::getAndParse_SUPPORTED_FEATURES_AVRCP(ULONG recordHandle, HANDLE_
 
 	BYTE bssr_response[5000]{ 0 };
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::AVRCP::SupportedFeatures, SDP::AVRCP::SupportedFeatures, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::AVRCP::SupportedFeatures, SDP::AVRCP::SupportedFeatures, bssr_response, 5000);
 
 	if (test)
 	{

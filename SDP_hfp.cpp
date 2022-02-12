@@ -11,7 +11,7 @@ int SDP::HFP::getAndParse_NETWORK_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa)
 
 	BYTE bssr_response[5000]{ 0 };
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::HFP::Network, SDP::HFP::Network, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::HFP::Network, SDP::HFP::Network, bssr_response, 5000);
 
 	if (test)
 	{
@@ -39,7 +39,7 @@ int SDP::HFP::getAndParse_SUPPORTED_FEATURES_HFP(ULONG recordHandle, HANDLE_SDP_
 
 	BYTE bssr_response[5000]{ 0 };
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::HFP::SupportedFeatures, SDP::HFP::SupportedFeatures, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::HFP::SupportedFeatures, SDP::HFP::SupportedFeatures, bssr_response, 5000);
 
 	if (test)
 	{

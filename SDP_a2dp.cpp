@@ -11,7 +11,7 @@ int SDP::A2DP::getAndParse_SUPPORTED_FEATURES_A2DP(ULONG recordHandle, HANDLE_SD
 
 	BYTE bssr_response[5000]{ 0 };
 
-	BOOL test = SDP::FUNCTIONS::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::A2DP::SupportedFeatures, SDP::A2DP::SupportedFeatures, bssr_response, 5000);
+	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::A2DP::SupportedFeatures, SDP::A2DP::SupportedFeatures, bssr_response, 5000);
 
 	if (test)
 	{
