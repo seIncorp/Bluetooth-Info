@@ -1,17 +1,9 @@
 #pragma once
-
 namespace SDP
 {
 
 	namespace OBEX
 	{
-		typedef enum
-		{
-			GoepL2capPsm = 0x0200,
-			ServiceVersion = 0x0300,
-			SupportedFormatsList = 0x0303
-
-		} ATTRIBUTE_ID_OBEX;
 
 		std::string getSupportedFormatsString(BYTE data[], int size);
 
@@ -50,8 +42,37 @@ namespace SDP
 
 		// GoepL2CapPsm use from MAP
 
-		int getAndParse_SERVICE_VERSION_OBEX(ULONG recordHandle, HANDLE_SDP_TYPE aa);
-		int getAndParse_SUPPORTED_FORMATS_LIST_OBEX(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		void parse_SERVICE_VERSION_OBEX(PSERVICE_VERSION handle);
+		void parse_SUPPORTED_FORMATS_LIST_OBEX(PSUPPORTED_FORMATS handle);
+
+
+		template<class C>
+		void parse_by_type_sub_function(const std::type_info& type, C handle, SHORT current_used_service)
+		{
+			const std::type_info& a10 = typeid(SERVICE_VERSION_S*);
+			const std::type_info& a11 = typeid(SUPPORTED_FORMATS_S*);
+			const std::type_info& a12 = typeid(SDP::MAP::GOEPL2CAPPSM_S*);
+			
+
+			// ServiceVersion
+			if (type == a10)
+			{
+				parse_SERVICE_VERSION_OBEX((PSERVICE_VERSION) handle);
+			}
+
+			// SupportedFormatsList
+			if (type == a11)
+			{
+				parse_SUPPORTED_FORMATS_LIST_OBEX((PSUPPORTED_FORMATS) handle);
+			}
+
+			// GoepL2capPsm
+			if (type == a12)
+			{
+				SDP::MAP::parse_GOEPL2CAPPSM_MAP((SDP::MAP::PGOEPL2CAPPSM) handle);
+			}
+		}
+
 
 	};
 

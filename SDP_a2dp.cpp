@@ -5,43 +5,64 @@
 /*********************************************************************************************************************/
 /* A2DP SPECIFIC */
 
-int SDP::A2DP::getAndParse_SUPPORTED_FEATURES_A2DP(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+void SDP::A2DP::parse_SUPPORTED_FEATURES_A2DP(PSUPPORTED_FEATURES handle)
 {
-	printf("\n\n*** getAndParse_SUPPORTED_FEATURES_A2DP ***\n");
+	SHORT temp = 0x00;
+	temp |= handle->VALUE.value[0];
+	temp <<= 8;
+	temp |= handle->VALUE.value[1];
 
-	BYTE bssr_response[5000]{ 0 };
+	handle->VALUE.supported_features_value = temp;
 
-	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::A2DP::SupportedFeatures, SDP::A2DP::SupportedFeatures, bssr_response, 5000);
+	handle->VALUE.sfds = new SUPPORTED_FEATURES_DATA_S(&handle->VALUE.supported_features_value);
 
-	if (test)
-	{
-		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
-
-		SDP::FUNCTIONS::printResponse(bssr_response);
-
-		SDP::A2DP::SUPPORTED_FEATURES* supported_features_handle = new SDP::A2DP::SUPPORTED_FEATURES();
-
-		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::A2DP::SUPPORTED_FEATURES*, BYTE[]>(supported_features_handle, bssr_response, 5000);
-
-
-		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::A2DP::SUPPORTED_FEATURES*, BYTE[]>(supported_features_handle, bssr_response, 5000, position);
-
-
-		SHORT temp = 0x00;
-		temp |= supported_features_handle->VALUE.value[0];
-		temp <<= 8;
-		temp |= supported_features_handle->VALUE.value[1];
-
-		supported_features_handle->VALUE.supported_features_value = temp;
-
-		supported_features_handle->VALUE.sfds = new SUPPORTED_FEATURES_DATA_S(&supported_features_handle->VALUE.supported_features_value);
-
-
-		supported_features_handle->print<SUPPORTED_FEATURES::VV>(supported_features_handle->VALUE);
-
-		return 1;
-	}
-
-	return 0;
 }
+
+
+/*********************************************************************************************************************/
+/* CLASS A2DP_all_attributes functions */
+
+
+SDP::A2DP::A2DP_all_attributes::A2DP_all_attributes()
+{
+	setDefaultObjects();
+
+	provider_name_handle = new PROVIDER_NAME();
+	supported_features_handle = new SUPPORTED_FEATURES();
+}
+
+void SDP::A2DP::A2DP_all_attributes::call_ALL_ATTR(DEVICE_DATA_SDP* device_data_sdp)
+{
+	callDefaultAttributes(device_data_sdp);
+
+	FUNCTIONS::getAndParse_DEAFULT<PPROVIDER_NAME, PROVIDER_NAME::VV>(
+		device_data_sdp->buffer_res[0],
+		device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME,
+		provider_name_handle,
+		SDP::ProviderName,
+		SDP::ProviderName,
+		device_data_sdp,
+		0
+	);
+
+	FUNCTIONS::getAndParse_DEAFULT<PSUPPORTED_FEATURES, SUPPORTED_FEATURES::VV>(
+		device_data_sdp->buffer_res[0],
+		device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME,
+		supported_features_handle,
+		SupportedFeatures,
+		SupportedFeatures,
+		device_data_sdp,
+		0
+		);
+}
+
+void SDP::A2DP::A2DP_all_attributes::print_ALL_ATTR()
+{
+	printDefaultData();
+
+	supported_features_handle->print<SUPPORTED_FEATURES_S::VV>(supported_features_handle->VALUE);
+}
+
+
+
 

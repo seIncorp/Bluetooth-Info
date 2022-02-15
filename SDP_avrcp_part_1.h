@@ -1,18 +1,10 @@
 #pragma once
-
-
-
 namespace SDP
 {
 
 	namespace AVRCP
 	{
-		typedef enum
-		{
-			SupportedFeatures = 0x0311
-
-		} ATTRIBUTE_ID_DEVICE_AVRCP;
-
+		
 		// TODO: naredi se za A_V_RemoteControlController (drugo strukturo ker je vec bit-ov in druga razlaga)(AVRCP_v1.6.2.pdf)
 
 		struct SUPPORTED_FEATURES_DATA_S
@@ -117,6 +109,10 @@ namespace SDP
 			}
 
 		} SUPPORTED_FEATURES, * PSUPPORTED_FEATURES;
+
+
+
+
 
 		int getAndParse_SUPPORTED_FEATURES_AVRCP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 	};

@@ -161,154 +161,40 @@ std::string SDP::MAP::getSupportedFeaturesString(SDP::MAP::SUPPORTED_FEATURES_ME
 
 
 
-
-int SDP::MAP::getAndParse_GOEPL2CAPPSM_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa, PGOEPL2CAPPSM goepl2cappsm_handle, int print)
+void SDP::MAP::parse_GOEPL2CAPPSM_MAP(PGOEPL2CAPPSM handle)
 {
-	printf("\n\n*** getAndParse_GOEPL2CAPPSM_MAP ***\n");
+	SHORT temp = 0x00;
+	temp |= handle->VALUE.value[0];
+	temp <<= 8;
+	temp |= handle->VALUE.value[1];
 
-	BYTE bssr_response[5000]{ 0 };
-
-	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::MAP::GoepL2capPsm, SDP::MAP::GoepL2capPsm, bssr_response, 5000);
-
-	if (test)
-	{
-		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
-
-		SDP::FUNCTIONS::printResponse(bssr_response);
-
-		//SDP::MAP::GOEPL2CAPPSM* goepl2cappsm_handle = new SDP::MAP::GOEPL2CAPPSM();
-
-		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::MAP::GOEPL2CAPPSM*, BYTE[]>(goepl2cappsm_handle, bssr_response, 5000);
-
-
-		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::MAP::GOEPL2CAPPSM*, BYTE[]>(goepl2cappsm_handle, bssr_response, 5000, position);
-
-		SHORT temp = 0x00;
-		temp |= goepl2cappsm_handle->VALUE.value[0];
-		temp <<= 8;
-		temp |= goepl2cappsm_handle->VALUE.value[1];
-
-		goepl2cappsm_handle->VALUE.GoepL2CapPsm_value = temp;
-
-		if (print == 1)
-			goepl2cappsm_handle->print<GOEPL2CAPPSM::VV>(goepl2cappsm_handle->VALUE);
-
-
-		return 1;
-	}
-
-
-	return 0;
+	handle->VALUE.GoepL2CapPsm_value = temp;
 }
 
-int SDP::MAP::getAndParse_SUPPORTED_MESSAGE_TYPES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa, PSUPPORTED_MESSAGE_TYPES supported_message_types_handle, int print)
+void SDP::MAP::parse_SUPPORTED_MESSAGE_TYPES_MAP(PSUPPORTED_MESSAGE_TYPES handle)
 {
-	printf("\n\n*** getAndParse_SUPPORTED_MESSAGE_TYPES_MAP ***\n");
-
-	BYTE bssr_response[5000]{ 0 };
-
-	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::MAP::SupportedMessageTypes, SDP::MAP::SupportedMessageTypes, bssr_response, 5000);
-
-	if (test)
-	{
-		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
-
-		SDP::FUNCTIONS::printResponse(bssr_response);
-
-		//SDP::MAP::SUPPORTED_MESSAGE_TYPES* supported_message_types_handle = new SDP::MAP::SUPPORTED_MESSAGE_TYPES();
-
-		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::MAP::SUPPORTED_MESSAGE_TYPES*, BYTE[]>(supported_message_types_handle, bssr_response, 5000);
-
-
-		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::MAP::SUPPORTED_MESSAGE_TYPES*, BYTE[]>(supported_message_types_handle, bssr_response, 5000, position);
-
-		supported_message_types_handle->VALUE.sfm = new SUPPORTED_FEATURES_MESSAGES_S(supported_message_types_handle->VALUE.value);
-
-		if (print == 1)
-			supported_message_types_handle->print<SUPPORTED_MESSAGE_TYPES::VV>(supported_message_types_handle->VALUE);
-
-		return 1;
-	}
-
-	return 0;
+	handle->VALUE.sfm = new SUPPORTED_FEATURES_MESSAGES_S(handle->VALUE.value);
 }
 
-int SDP::MAP::getAndParse_MAS_INSTANCE_ID_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa, PMAS_INSTANCE_ID mas_instance_id_handle, int print)
+void SDP::MAP::parse_MAS_INSTANCE_ID_MAP(PMAS_INSTANCE_ID handle)
 {
-	printf("\n\n*** getAndParse_MAS_INSTANCE_ID_MAP ***\n");
-
-	BYTE bssr_response[5000]{ 0 };
-
-	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::MAP::MASInstanceID, SDP::MAP::MASInstanceID, bssr_response, 5000);
-
-	if (test)
-	{
-		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
-
-		SDP::FUNCTIONS::printResponse(bssr_response);
-
-		//SDP::MAP::MAS_INSTANCE_ID* mas_instance_id_handle = new SDP::MAP::MAS_INSTANCE_ID();
-
-		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::MAP::MAS_INSTANCE_ID*, BYTE[]>(mas_instance_id_handle, bssr_response, 5000);
-
-
-		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::MAP::MAS_INSTANCE_ID*, BYTE[]>(mas_instance_id_handle, bssr_response, 5000, position);
-
-		mas_instance_id_handle->VALUE.instance_ID = mas_instance_id_handle->VALUE.value[0];
-
-		if (print == 1)
-			mas_instance_id_handle->print<MAS_INSTANCE_ID::VV>(mas_instance_id_handle->VALUE);
-
-
-
-		return 1;
-	}
-
-	return 0;
+	handle->VALUE.instance_ID = handle->VALUE.value[0];
 }
 
-int SDP::MAP::getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_SDP_TYPE aa, PMAP_SUPPORTED_FEATURES map_supported_features_handle, int print)
+void SDP::MAP::parse_MAP_SUPPORTED_FEATURES_MAP(PMAP_SUPPORTED_FEATURES handle)
 {
-	printf("\n\n*** getAndParse_MAP_SUPPORTED_FEATURES_MAP ***\n");
+	DWORD temp = 0x00;
 
-	BYTE bssr_response[5000]{ 0 };
+	temp |= handle->VALUE.value[0];
+	temp <<= 8;
+	temp |= handle->VALUE.value[1];
+	temp <<= 8;
+	temp |= handle->VALUE.value[2];
+	temp <<= 8;
+	temp |= handle->VALUE.value[3];
 
-	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::MAP::MapSupportedFeatures, SDP::MAP::MapSupportedFeatures, bssr_response, 5000);
-
-	if (test)
-	{
-		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
-
-		SDP::FUNCTIONS::printResponse(bssr_response);
-
-		//SDP::MAP::MAP_SUPPORTED_FEATURES* map_supported_features_handle = new SDP::MAP::MAP_SUPPORTED_FEATURES();
-
-		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::MAP::MAP_SUPPORTED_FEATURES*, BYTE[]>(map_supported_features_handle, bssr_response, 5000);
-
-
-		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::MAP::MAP_SUPPORTED_FEATURES*, BYTE[]>(map_supported_features_handle, bssr_response, 5000, position);
-
-		DWORD temp = 0x00;
-
-		temp |= map_supported_features_handle->VALUE.value[0];
-		temp <<= 8;
-		temp |= map_supported_features_handle->VALUE.value[1];
-		temp <<= 8;
-		temp |= map_supported_features_handle->VALUE.value[2];
-		temp <<= 8;
-		temp |= map_supported_features_handle->VALUE.value[3];
-
-		map_supported_features_handle->VALUE.sfm = new SUPPORTED_FEATURES_MESSAGES_S(&temp);
-
-		if (print == 1)
-			map_supported_features_handle->print<MAP_SUPPORTED_FEATURES::VV>(map_supported_features_handle->VALUE);
-
-		return 1;
-	}
-
-	return 0;
+	handle->VALUE.sfm = new SUPPORTED_FEATURES_MESSAGES_S(&temp);
 }
-
 
 
 /*********************************************************************************************************************/
@@ -318,12 +204,7 @@ int SDP::MAP::getAndParse_MAP_SUPPORTED_FEATURES_MAP(ULONG recordHandle, HANDLE_
 SDP::MAP::MAP_all_attributes::MAP_all_attributes()
 {
 	// set all objects
-
-	record_handle = new DEFAULT_OBJECT();
-	class_id_handle = new SERVICE_CLASS_ID_LIST();
-	protocol_descriptor_list_handle = new PROTOCOL_DESCRIPTOR_LIST();
-	service_name_handle = new SERVICE_NAME();
-	bluetooth_profile_descriptor_list_handle = new BLUETOOTH_PROFILE_DESCRIPTOR_LIST();
+	setDefaultObjects();
 
 	goepl2cappsm_handle = new GOEPL2CAPPSM();
 	supported_message_types_handle = new SUPPORTED_MESSAGE_TYPES();
@@ -334,26 +215,54 @@ SDP::MAP::MAP_all_attributes::MAP_all_attributes()
 
 void SDP::MAP::MAP_all_attributes::call_ALL_ATTR(DEVICE_DATA_SDP* device_data_sdp)
 {
-	SDP::FUNCTIONS::getAndParse_SERVICE_RECORD_HANDLE(device_data_sdp->buffer_res[0], device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME, record_handle, 0);
-	SDP::FUNCTIONS::getAndParse_SERVICE_CLASS_ID_LIST(device_data_sdp->buffer_res[0], device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME, class_id_handle, 0);
-	SDP::FUNCTIONS::getAndParse_PROTOCOL_DESCRIPTOR_LIST(device_data_sdp->buffer_res[0], device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME, protocol_descriptor_list_handle, 0);
-	SDP::FUNCTIONS::getAndParse_SERVICE_NAME(device_data_sdp->buffer_res[0], device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME, service_name_handle, 0);
-	SDP::FUNCTIONS::getAndParse_BLUETOOTH_PROFILE_DESCRIPTOR_LIST(device_data_sdp->buffer_res[0], device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME, bluetooth_profile_descriptor_list_handle, 0);
+	callDefaultAttributes(device_data_sdp);
+
+	FUNCTIONS::getAndParse_DEAFULT<PGOEPL2CAPPSM, GOEPL2CAPPSM::VV>(
+		device_data_sdp->buffer_res[0],
+		device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME,
+		goepl2cappsm_handle,
+		SDP::MAP::GoepL2capPsm,
+		SDP::MAP::GoepL2capPsm,
+		device_data_sdp,
+		0
+	);
 	
-	getAndParse_GOEPL2CAPPSM_MAP(device_data_sdp->buffer_res[0], device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME, goepl2cappsm_handle, 0);
-	getAndParse_SUPPORTED_MESSAGE_TYPES_MAP(device_data_sdp->buffer_res[0], device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME, supported_message_types_handle, 0);
-	getAndParse_MAS_INSTANCE_ID_MAP(device_data_sdp->buffer_res[0], device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME, mas_instance_id_handle, 0);
-	getAndParse_MAP_SUPPORTED_FEATURES_MAP(device_data_sdp->buffer_res[0], device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME, map_supported_features_handle, 0);
+	FUNCTIONS::getAndParse_DEAFULT<PSUPPORTED_MESSAGE_TYPES, SUPPORTED_MESSAGE_TYPES::VV>(
+		device_data_sdp->buffer_res[0],
+		device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME,
+		supported_message_types_handle,
+		SDP::MAP::SupportedMessageTypes,
+		SDP::MAP::SupportedMessageTypes,
+		device_data_sdp,
+		0
+	);
+
+	FUNCTIONS::getAndParse_DEAFULT<PMAS_INSTANCE_ID, MAS_INSTANCE_ID::VV>(
+		device_data_sdp->buffer_res[0],
+		device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME,
+		mas_instance_id_handle,
+		SDP::MAP::MASInstanceID,
+		SDP::MAP::MASInstanceID,
+		device_data_sdp,
+		0
+	);
+
+	FUNCTIONS::getAndParse_DEAFULT<PMAP_SUPPORTED_FEATURES, MAP_SUPPORTED_FEATURES::VV>(
+		device_data_sdp->buffer_res[0],
+		device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME,
+		map_supported_features_handle,
+		SDP::MAP::MapSupportedFeatures,
+		SDP::MAP::MapSupportedFeatures,
+		device_data_sdp,
+		0
+	);
 }
 
 void SDP::MAP::MAP_all_attributes::print_ALL_ATTR()
 {
-	record_handle->print(record_handle->VALUE);
-	class_id_handle->print<SERVICE_CLASS_ID_LIST_S::VV>(class_id_handle->VALUE);
-	protocol_descriptor_list_handle->print<PROTOCOL_DESCRIPTOR_LIST_S::VV>(protocol_descriptor_list_handle->VALUE);
-	service_name_handle->print<SERVICE_NAME_S::VV>(service_name_handle->VALUE);
-	bluetooth_profile_descriptor_list_handle->print<BLUETOOTH_PROFILE_DESCRIPTOR_LIST_S::VV>(bluetooth_profile_descriptor_list_handle->VALUE);
-	
+	printDefaultData();
+
+
 	goepl2cappsm_handle->print<GOEPL2CAPPSM_S::VV>(goepl2cappsm_handle->VALUE);
 	supported_message_types_handle->print<SUPPORTED_MESSAGE_TYPES_S::VV>(supported_message_types_handle->VALUE);
 	mas_instance_id_handle->print<MAS_INSTANCE_ID_S::VV>(mas_instance_id_handle->VALUE);

@@ -1,17 +1,8 @@
 #pragma once
-
 namespace SDP
 {
-
-
 	namespace A2DP
 	{
-		typedef enum
-		{
-			SupportedFeatures = 0x0311
-
-		} ATTRIBUTE_ID_DEVICE_A2DP;
-
 		struct SUPPORTED_FEATURES_DATA_S
 		{
 			struct SR_S
@@ -88,8 +79,19 @@ namespace SDP
 
 		// TODO: naredi se za Audio Sink 
 
-		int getAndParse_SUPPORTED_FEATURES_A2DP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		void parse_SUPPORTED_FEATURES_A2DP(PSUPPORTED_FEATURES handle);
+
+		template<class C>
+		void parse_by_type_sub_function(const std::type_info& type, C handle, SHORT current_used_service)
+		{
+			const std::type_info& a10 = typeid(SUPPORTED_FEATURES_S*);
+
+
+			// SupportedFeatures
+			if (type == a10)
+			{
+				parse_SUPPORTED_FEATURES_A2DP((PSUPPORTED_FEATURES)handle);
+			}
+		}
 	};
-
-
 };

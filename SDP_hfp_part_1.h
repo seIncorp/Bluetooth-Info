@@ -1,18 +1,10 @@
 #pragma once
 
-
 namespace SDP
 {
 
 	namespace HFP
 	{
-		typedef enum
-		{
-			Network = 0x0301,
-			SupportedFeatures = 0x0311
-
-		} ATTRIBUTE_ID_HFP;
-
 		struct SUPPORTED_FEATURES_DATA_S
 		{
 			struct SR_S
@@ -141,6 +133,7 @@ namespace SDP
 				printVALUE_ELEMENT(v);
 
 				printf("Network: %s\n", v.value[0] == 0x01 ? "Ability to reject a call" : "No ability to reject a call");
+				printf("\n");
 			}
 
 		} NETWORK, * PNETWORK;
@@ -165,15 +158,35 @@ namespace SDP
 				// TODO: naredi da bo tudi za brez AG (trenutno narejeno samo za AG)
 				printf("Supported features: 0x%04X\n", v.supported_features_value);
 				printf("%s\n", v.sfds->getSupportedFeatures_AG_String().c_str());
-
+				printf("\n");
 			}
 
 		} SUPPORTED_FEATURES, * PSUPPORTED_FEATURES;
 
-		int getAndParse_NETWORK_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
-		int getAndParse_SUPPORTED_FEATURES_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		//int getAndParse_NETWORK_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		//int getAndParse_SUPPORTED_FEATURES_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+
+		void parse_NETWORK_HFP(PNETWORK handle);
+		void parse_SUPPORTED_FEATURES_HFP(PSUPPORTED_FEATURES handle);
+
+
+		template<class C>
+		void parse_by_type_sub_function(const std::type_info& type, C handle, SHORT current_used_service)
+		{
+			const std::type_info& a10 = typeid(NETWORK_S*);
+			const std::type_info& a11 = typeid(SUPPORTED_FEATURES_S*);
+
+			// Network
+			if (type == a10)
+			{
+				parse_NETWORK_HFP((PNETWORK) handle);
+			}
+
+			// SupportedFeatures
+			if (type == a11)
+			{
+				parse_SUPPORTED_FEATURES_HFP((PSUPPORTED_FEATURES) handle);
+			}
+		}
 	}
-
-
-
 };

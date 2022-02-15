@@ -1,17 +1,10 @@
 #pragma once
-
 namespace SDP
 {
 
 	namespace PBAP
 	{
-		typedef enum
-		{
-			GoepL2capPsm = 0x0200,
-			SupportedRepositories = 0x0314,
-			PbapSupportedFeatures = 0x0317
 
-		} ATTRIBUTE_ID_PBAP;
 
 		struct SUPPORTED_REPOSITORIES_DATA_S
 		{
@@ -96,8 +89,38 @@ namespace SDP
 
 		// GoepL2CapPsm use from MAP
 
-		int getAndParse_SUPPORTED_REPOSITORIES_PBAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
-		int getAndParse_PBAP_SUPPORTED_FEATURES_PBAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		void parse_SUPPORTED_REPOSITORIES_PBAP(PSUPPORTED_REPOSITORIES handle);
+		void parse_PBAP_SUPPORTED_FEATURES_PBAP(PPBAP_SUPPORTED_FEATURES handle);
+
+		//int getAndParse_SUPPORTED_REPOSITORIES_PBAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+		//int getAndParse_PBAP_SUPPORTED_FEATURES_PBAP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
+
+		template<class C>
+		void parse_by_type_sub_function(const std::type_info& type, C handle, SHORT current_used_service)
+		{
+			const std::type_info& a10 = typeid(SUPPORTED_REPOSITORIES_S*);
+			const std::type_info& a11 = typeid(PBAP_SUPPORTED_FEATURES_S*);
+			const std::type_info& a12 = typeid(SDP::MAP::GOEPL2CAPPSM_S*);
+			
+
+			// SupportedRepositories
+			if (type == a10)
+			{
+				parse_SUPPORTED_REPOSITORIES_PBAP((PSUPPORTED_REPOSITORIES) handle);
+			}
+
+			// PbapSupportedFeatures
+			if (type == a11)
+			{
+				parse_PBAP_SUPPORTED_FEATURES_PBAP((PPBAP_SUPPORTED_FEATURES) handle);
+			}
+
+			// GoepL2capPsm
+			if (type == a12)
+			{
+				SDP::MAP::parse_GOEPL2CAPPSM_MAP((SDP::MAP::PGOEPL2CAPPSM)handle);
+			}
+		}
 
 	};
 

@@ -4,18 +4,7 @@ namespace SDP
 {
 	namespace PNPINFO	// PnPInformation
 	{
-		typedef enum
-		{
-			SpecificationID = 0x0200,
-			VendorID = 0x0201,
-			ProductID = 0x0202,
-			Version = 0x0203,
-			PrimaryRecord = 0x0204,
-			VendorIDSource = 0x0205,
-			ClientExecutableURL = 0x000B,
-			DocumentationURL = 0x000A
-
-		} ATTRIBUTE_ID_DEVICE_SDP;
+		
 
 		typedef struct INFO_S : DEFAULT_OBJECT
 		{
@@ -74,6 +63,9 @@ namespace SDP
 			}
 
 		} INFO, * PINFO;
+
+
+		
 
 
 		int getAndParse_SPECIFICATION_ID_PNPINFO(ULONG recordHandle, HANDLE_SDP_TYPE aa);

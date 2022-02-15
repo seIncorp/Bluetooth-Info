@@ -5,71 +5,69 @@
 /* HFP SPECIFIC */
 
 
-int SDP::HFP::getAndParse_NETWORK_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+void SDP::HFP::parse_NETWORK_HFP(PNETWORK handle)
 {
-	printf("\n\n*** getAndParse_NETWORK_HFP ***\n");
 
-	BYTE bssr_response[5000]{ 0 };
-
-	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::HFP::Network, SDP::HFP::Network, bssr_response, 5000);
-
-	if (test)
-	{
-		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
-
-		SDP::FUNCTIONS::printResponse(bssr_response);
-
-		SDP::HFP::NETWORK* network_handle = new SDP::HFP::NETWORK();
-
-		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::HFP::NETWORK*, BYTE[]>(network_handle, bssr_response, 5000);
-
-		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::HFP::NETWORK*, BYTE[]>(network_handle, bssr_response, 5000, position);
-
-		network_handle->print<NETWORK::VV>(network_handle->VALUE);
-
-		return 1;
-	}
-
-	return 0;
 }
 
-int SDP::HFP::getAndParse_SUPPORTED_FEATURES_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+void SDP::HFP::parse_SUPPORTED_FEATURES_HFP(PSUPPORTED_FEATURES handle)
 {
-	printf("\n\n*** getAndParse_SUPPORTED_FEATURES_HFP ***\n");
+	SHORT temp = 0x00;
 
-	BYTE bssr_response[5000]{ 0 };
-
-	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::HFP::SupportedFeatures, SDP::HFP::SupportedFeatures, bssr_response, 5000);
-
-	if (test)
-	{
-		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
-
-		SDP::FUNCTIONS::printResponse(bssr_response);
-
-		SDP::HFP::SUPPORTED_FEATURES* supported_features_handle = new SDP::HFP::SUPPORTED_FEATURES();
-
-		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::HFP::SUPPORTED_FEATURES*, BYTE[]>(supported_features_handle, bssr_response, 5000);
+	temp |= handle->VALUE.value[0];
+	temp <<= 8;
+	temp |= handle->VALUE.value[1];
 
 
-		position = SDP::FUNCTIONS::set_save_VALUE_ELEMENT<SDP::HFP::SUPPORTED_FEATURES*, BYTE[]>(supported_features_handle, bssr_response, 5000, position);
+	handle->VALUE.supported_features_value = temp;
 
-		SHORT temp = 0x00;
-
-		temp |= supported_features_handle->VALUE.value[0];
-		temp <<= 8;
-		temp |= supported_features_handle->VALUE.value[1];
-
-
-		supported_features_handle->VALUE.supported_features_value = temp;
-
-		supported_features_handle->VALUE.sfds = new SUPPORTED_FEATURES_DATA_S(&temp);
-
-		supported_features_handle->print<SUPPORTED_FEATURES::VV>(supported_features_handle->VALUE);
-
-		return 1;
-	}
-
-	return 0;
+	handle->VALUE.sfds = new SUPPORTED_FEATURES_DATA_S(&temp);
 }
+
+
+
+/*********************************************************************************************************************/
+/* CLASS HFP_all_attributes functions */
+
+SDP::HFP::HFP_all_attributes::HFP_all_attributes()
+{
+	setDefaultObjects();
+
+	network_handle = new NETWORK();
+	supported_features_handle = new SUPPORTED_FEATURES();
+}
+
+void SDP::HFP::HFP_all_attributes::call_ALL_ATTR(DEVICE_DATA_SDP* device_data_sdp)
+{
+	callDefaultAttributes(device_data_sdp);
+
+	FUNCTIONS::getAndParse_DEAFULT<PNETWORK, NETWORK::VV>(
+		device_data_sdp->buffer_res[0],
+		device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME,
+		network_handle,
+		Network,
+		Network,
+		device_data_sdp,
+		0
+		);
+
+	FUNCTIONS::getAndParse_DEAFULT<PSUPPORTED_FEATURES, SUPPORTED_FEATURES::VV>(
+		device_data_sdp->buffer_res[0],
+		device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME,
+		supported_features_handle,
+		SupportedFeatures,
+		SupportedFeatures,
+		device_data_sdp,
+		0
+		);
+}
+
+void SDP::HFP::HFP_all_attributes::print_ALL_ATTR()
+{
+	printDefaultData();
+
+	network_handle->print<NETWORK::VV>(network_handle->VALUE);
+	supported_features_handle->print<SUPPORTED_FEATURES::VV>(supported_features_handle->VALUE);
+}
+
 
