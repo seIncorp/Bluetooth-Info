@@ -3,11 +3,6 @@
 MAIN::MAIN_FLAGS main_flags{ 0 };
 IOCTL_S::DEFAULT_DATA dd{ 0 };
 
-
-
-//PLOCAL_RADIO_DEVICE_DATA local_device_radio;
-//PCONNECTED_DEVICE_DATA connected_device;
-
 int main(int argc, char *argv[])
 {
 	MAIN::parseCommand(argc, argv);
@@ -82,32 +77,7 @@ int main(int argc, char *argv[])
 		/*********************************************************************************************/
 		/*  */
 
-		if (main_flags.devInfo_flag)
-			IOCTL_S::testCALLS_1();
-
-
-
-
-		/*if (getDeviceInfo())
-			{
-
-			}
-			else
-				printf("ERROR!!!\n");*/
-			//if (getLocalBthInfo())
-			//{
-			//	
-			//}
-			//else
-			//{
-			//	// TODO: print correct error
-			//	printf("ERROR!!!\n");
-			//}
-
-
-
-
-
+		
 		
 
 

@@ -84,44 +84,40 @@ void IOCTL_S::printErrorMessage(DWORD id)
 	if (id != 0x00)
 		switch (id)
 		{
-			/*case 0x00:
-				printf("ERROR [0x%X - %d] [ERROR_SUCCESS]\n", id, id);
-			break;*/
-
-		case 0x3A:
-			printf("ERROR [0x%X - %d] [ERROR_BAD_NET_RESP]\n", id, id);
+			case 0x3A:
+				printf("ERROR [0x%X - %d] [ERROR_BAD_NET_RESP]\n", id, id);
 			break;
 
-		case 0x57:
-			printf("ERROR [0x%X - %d] [ERROR_INVALID_PARAMETER]\n", id, id);
+			case 0x57:
+				printf("ERROR [0x%X - %d] [ERROR_INVALID_PARAMETER]\n", id, id);
 			break;
 
-		case 0x79:
-			printf("ERROR [0x%X - %d] [ERROR_SEM_TIMEOUT]\n", id, id);
+			case 0x79:
+				printf("ERROR [0x%X - %d] [ERROR_SEM_TIMEOUT]\n", id, id);
 			break;
 
-		case 0x7A:
-			printf("ERROR [0x%X - %d] [ERROR_INSUFFICIENT_BUFFER]\n", id, id);
+			case 0x7A:
+				printf("ERROR [0x%X - %d] [ERROR_INSUFFICIENT_BUFFER]\n", id, id);
 			break;
 
-		case 0x32:
-			printf("ERROR [0x%X - %d] [ERROR_NOT_SUPPORTED]\n", id, id);
+			case 0x32:
+				printf("ERROR [0x%X - %d] [ERROR_NOT_SUPPORTED]\n", id, id);
 			break;
 
-		case 0x522:
-			printf("ERROR [0x%X - %d] [ERROR_PRIVILEGE_NOT_HELD]\n", id, id);
+			case 0x522:
+				printf("ERROR [0x%X - %d] [ERROR_PRIVILEGE_NOT_HELD]\n", id, id);
 			break;
 
-		case 0x48F:
-			printf("ERROR [0x%X - %d] [ERROR_DEVICE_NOT_CONNECTED]\n", id, id);
+			case 0x48F:
+				printf("ERROR [0x%X - %d] [ERROR_DEVICE_NOT_CONNECTED]\n", id, id);
 			break;
 
-		case 0x6F8:
-			printf("ERROR [0x%X - %d] [ERROR_INVALID_USER_BUFFER]\n", id, id);
+			case 0x6F8:
+				printf("ERROR [0x%X - %d] [ERROR_INVALID_USER_BUFFER]\n", id, id);
 			break;
 
-		default:
-			printf("ERROR [0x%X - %d] [????]\n", id, id);
+			default:
+				printf("ERROR [0x%X - %d] [????]\n", id, id);
 			break;
 		}
 }
@@ -432,8 +428,6 @@ int IOCTL_S::getBthDeviceInfo(int print)
 		if(print == 1)
 			devices->print();
 
-
-
 		return 1;
 	}
 	else
@@ -484,146 +478,7 @@ void IOCTL_S::getLocalBthInfo()
 
 		// TODO: preveri tezavo s prikazom zunaj
 		local_device_radio->print();
-
-		//return 1;
-	}
-
-	//return 0;
-}
-
-
-
-
-
-
-
-
-void IOCTL_S::testCALLS()
-{
-	// https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/bthioctl/ni-bthioctl-ioctl_internal_bthenum_get_devinfo
-
-	// TODO: razmisli ce se sploh rabi tole, ker ze obstaja drugi ioctl klic ki dobi te podatke
-
-	BYTE data[5000];
-
-	dd.bResult = DeviceIoControl(
-		dd.hDevice,					// device to be queried
-		IOCTL_BTH_GET_LOCAL_INFO,	// operation to perform
-		NULL, 0,                    // no input buffer
-		&data, 5000,        // output buffer
-		&dd.junk,                   // # bytes returned
-		(LPOVERLAPPED)NULL);        // synchronous I/O
-
-	printErrorMessage(GetLastError());
-
-	if (dd.bResult)
-	{
-		printf("DELA!!!! \n");
-
-		PBTH_DEVICE_INFO pbdi = (PBTH_DEVICE_INFO)data;
-
-		printf("name: %s\n", pbdi->name);
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-
 	}
 }
 
 
-
-void IOCTL_S::testCALLS_1()
-{
-	BYTE data[5000];
-
-
-
-
-	BTH_COMMAND_HEADER* bch = new BTH_COMMAND_HEADER();
-	bch->OpCode = 0x1001;					// OCF,OGF
-	//bch->OpCode = 0x402;					// OCF,OGF
-	//bch->TotalParameterLength = 5;			// 3 + 1 + 1
-	bch->TotalParameterLength = 0;			// 3 + 1 + 1
-
-	BTH_VENDOR_SPECIFIC_COMMAND* bvsc = new BTH_VENDOR_SPECIFIC_COMMAND();
-	bvsc->ManufacturerId = 0x0A;
-	bvsc->LmpVersion = 0x00;
-	bvsc->MatchAnySinglePattern = FALSE;
-	//bvsc->HciHeader = *bch;
-	bvsc->HciHeader.OpCode = 0x1002;
-	bvsc->HciHeader.TotalParameterLength = 0;
-	bvsc->Data[0] = 0x00;
-
-	BYTE arr_a[] = { 0x00, 0x00 };
-
-	
-
-	PBTH_VENDOR_SPECIFIC_COMMAND pVendorSpecificCommand;
-	DWORD dwSize = sizeof(BTH_VENDOR_SPECIFIC_COMMAND) + 1;
-	BYTE rp[100];
-	pVendorSpecificCommand = (PBTH_VENDOR_SPECIFIC_COMMAND)::LocalAlloc(LPTR, dwSize);
-	if (NULL == pVendorSpecificCommand)
-		printErrorMessage(GetLastError());
-	pVendorSpecificCommand->ManufacturerId = 0x0a; // Vendor Id of Apple Built-In BTH Radio
-	pVendorSpecificCommand->LmpVersion = 0;
-	pVendorSpecificCommand->MatchAnySinglePattern = FALSE;
-
-	pVendorSpecificCommand->HciHeader.OpCode = 0x1001;
-	pVendorSpecificCommand->HciHeader.TotalParameterLength = 0;
-
-	//PBYTE pbData = (PBYTE)pVendorSpecificCommand->Data;
-
-	//pbData[0] = 0x01;
-	//pbData[1] = 0x01;
-
-
-	/*BYTE arr_r[]{
-		0x05, 0x04, 0x0d, 0xa8, 0xb8, 0x6e, 0xe7, 0x5a, 0xb6, 0x18, 0xcc, 0x01, 0x00, 0x06, 0xd2, 0x01
-	};*/
-
-
-
-
-
-
-	BYTE arr[5000]{ 0 };
-
-	dd.bResult = DeviceIoControl(
-		dd.hDevice,					// device to be queried
-		IOCTL_BTH_HCI_VENDOR_COMMAND,	// operation to perform
-		pVendorSpecificCommand, dwSize,                    // no input buffer
-		rp, sizeof(rp),        // output buffer
-		&dd.junk,                   // # bytes returned
-		(LPOVERLAPPED)NULL);        // synchronous I/O
-
-	printErrorMessage(GetLastError());
-
-
-	if (dd.bResult)
-	{
-		printf("DELA!!!! \n");
-
-		
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-		printf("\n");
-
-	}
-
-}
