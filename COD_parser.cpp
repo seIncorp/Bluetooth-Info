@@ -1,6 +1,6 @@
 #include "main.h"
 
-void parseCODdata(COD_data* data, PDEVICE_PARSED_COD_DATA cod)
+void COD_PARSER::parseCODdata(COD_data* data, PDEVICE_PARSED_COD_DATA cod)
 {
 	if (data->octet1_2.a0_1)
 	{

@@ -59,9 +59,7 @@ void SDP::DEFAULT_all_attributes::callDefaultAttributes(DEVICE_DATA_SDP* device_
 		SDP::BluetoothProfileDescriptorList,
 		device_data_sdp,
 		0
-		);
-
-
+	);
 }
 
 void SDP::DEFAULT_all_attributes::printDefaultData()

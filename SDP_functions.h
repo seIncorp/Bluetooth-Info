@@ -34,8 +34,6 @@ namespace SDP
 		void printResponse(BYTE bssr_response[]);
 
 
-
-
 		int getAndParse_SERVICE_AVAILABILITY(ULONG recordHandle, HANDLE_SDP_TYPE aa);
 
 	
@@ -141,7 +139,6 @@ namespace SDP
 
 
 
-
 		template<class C>
 		void parse_by_type(const std::type_info& type, C handle, SHORT current_used_service)
 		{
@@ -232,6 +229,22 @@ namespace SDP
 			{
 				SDP::A2DP::parse_by_type_sub_function<C>(type, handle, current_used_service);
 			}
+
+			if (current_used_service == SDP::A_V_RemoteControl ||
+				current_used_service == SDP::A_V_RemoteControlTarget ||
+				current_used_service == SDP::A_V_RemoteControlController
+				)
+			{
+				SDP::AVRCP::parse_by_type_sub_function<C>(type, handle, current_used_service);
+			}
+
+			if (current_used_service == SDP::Headset ||
+				current_used_service == SDP::Headset_Audio_Gateway ||
+				current_used_service == 0x1131
+				)
+			{
+				SDP::HSP::parse_by_type_sub_function<C>(type, handle, current_used_service);
+			}
 		}
 
 		template<class C, class D>
@@ -263,14 +276,5 @@ namespace SDP
 
 			return 0;
 		}
-
-
-
 	};
-
-
-
-
-
-
 }

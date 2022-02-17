@@ -4,6 +4,8 @@
 
 namespace SDP
 {
+	// TODO: dodaj se za AdditionalProtocolDescriptorList
+
 
 	typedef struct DEFAULT_OBJECT_S
 	{

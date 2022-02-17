@@ -14,15 +14,9 @@ namespace SDP
 		PLANGUAGE_BASE_ATTRIBUTE_ID_LIST language_base_attribute_id_list_handle;
 		PSERVICE_DESCRIPTION service_description_handle;
 
-
+		/* default functions */
 		void setDefaultObjects();
-
 		void callDefaultAttributes(DEVICE_DATA_SDP* device_data_sdp);
-
 		void printDefaultData();
-
-
 	};
-
-
 }

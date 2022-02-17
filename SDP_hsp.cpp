@@ -1,39 +1,44 @@
 #include "main.h"
 
 
-
-
 /*********************************************************************************************************************/
 /* HSP SPECIFIC */
 
-
-int SDP::HSP::getAndParse_REMOTE_AUDIO_VOLUME_CONTROL_HSP(ULONG recordHandle, HANDLE_SDP_TYPE aa)
+void SDP::HSP::parse_REMOTE_AUDIO_VOLUME_CONTROL_HSP(PREMOTE_AUDIO_VOLUME_CONTROL handle)
 {
-	printf("\n\n*** getAndParse_REMOTE_AUDIO_VOLUME_CONTROL_HSP ***\n");
-
-	BYTE bssr_response[5000]{ 0 };
-
-	BOOL test = SDP::FUNCTIONS::SDP_ATTRIBUTE_SEARCH::set_and_call_BTH_SDP_ATTRIBUTE_SEARCH(recordHandle, aa, SDP::HSP::RemoteAudioVolumeControl, SDP::HSP::RemoteAudioVolumeControl, bssr_response, 5000);
-
-	if (test)
-	{
-		printf("IOCTL_BTH_SDP_ATTRIBUTE_SEARCH --> OK\n");
-
-		SDP::FUNCTIONS::printResponse(bssr_response);
-
-		SDP::HSP::REMOTE_AUDIO_VOLUME_CONTROL* remote_audio_volume_control_handle = new SDP::HSP::REMOTE_AUDIO_VOLUME_CONTROL();
-
-		int position = SDP::FUNCTIONS::set_save_ATTRIBUTE_ELEMENT<SDP::HSP::REMOTE_AUDIO_VOLUME_CONTROL*, BYTE[]>(remote_audio_volume_control_handle, bssr_response, 5000);
-
-
-		position = FUNCTIONS::set_save_VALUE_ELEMENT<SDP::HSP::REMOTE_AUDIO_VOLUME_CONTROL*, BYTE[]>(remote_audio_volume_control_handle, bssr_response, 5000, position);
-
-
-		remote_audio_volume_control_handle->print<REMOTE_AUDIO_VOLUME_CONTROL::VV>(remote_audio_volume_control_handle->VALUE);
-
-		return 1;
-	}
-
-	return 0;
+	// TODO: najdi primer za parsanje
 }
 
+
+/*********************************************************************************************************************/
+/* CLASS HSP_all_attributes functions */
+
+
+SDP::HSP::HSP_all_attributes::HSP_all_attributes()
+{
+	setDefaultObjects();
+
+	remote_audio_volume_control_handle = new REMOTE_AUDIO_VOLUME_CONTROL();
+}
+
+void SDP::HSP::HSP_all_attributes::call_ALL_ATTR(DEVICE_DATA_SDP* device_data_sdp)
+{
+	callDefaultAttributes(device_data_sdp);
+
+	FUNCTIONS::getAndParse_DEAFULT<PREMOTE_AUDIO_VOLUME_CONTROL, REMOTE_AUDIO_VOLUME_CONTROL::VV>(
+		device_data_sdp->buffer_res[0],
+		device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME,
+		remote_audio_volume_control_handle,
+		RemoteAudioVolumeControl,
+		RemoteAudioVolumeControl,
+		device_data_sdp,
+		0
+		);
+}
+
+void SDP::HSP::HSP_all_attributes::print_ALL_ATTR()
+{
+	printDefaultData();
+
+	remote_audio_volume_control_handle->print<REMOTE_AUDIO_VOLUME_CONTROL_S::VV>(remote_audio_volume_control_handle->VALUE);
+}

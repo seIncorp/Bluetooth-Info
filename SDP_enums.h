@@ -93,4 +93,13 @@ namespace SDP
 
 		} ATTRIBUTE_ID_DEVICE_AVRCP;
 	}
+
+	namespace HSP
+	{
+		typedef enum
+		{
+			RemoteAudioVolumeControl = 0x0302
+
+		} ATTRIBUTE_ID_DEVICE_HSP;
+	}
 }

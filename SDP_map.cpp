@@ -210,7 +210,6 @@ SDP::MAP::MAP_all_attributes::MAP_all_attributes()
 	supported_message_types_handle = new SUPPORTED_MESSAGE_TYPES();
 	mas_instance_id_handle = new MAS_INSTANCE_ID();
 	map_supported_features_handle = new MAP_SUPPORTED_FEATURES();
-
 }
 
 void SDP::MAP::MAP_all_attributes::call_ALL_ATTR(DEVICE_DATA_SDP* device_data_sdp)

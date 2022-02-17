@@ -72,8 +72,5 @@ namespace SDP
 				SDP::MAP::parse_GOEPL2CAPPSM_MAP((SDP::MAP::PGOEPL2CAPPSM) handle);
 			}
 		}
-
-
 	};
-
 };
