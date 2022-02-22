@@ -1,34 +1,39 @@
 #pragma once
 
+
 namespace SDP
 {
 
-
-	namespace A2DP
+	namespace HFP
 	{
-		class A2DP_all_attributes : DEFAULT_all_attributes
+		class HFP_class : DEFAULT_class
 		{
 		public:
 
+			/* specific */
+			PNETWORK network_handle;
 			PSUPPORTED_FEATURES supported_features_handle;
 
-
-			A2DP_all_attributes();
+			HFP_class();
 
 			void call_ALL_ATTR(DEVICE_DATA_SDP* device_data_sdp);
 			void print_ALL_ATTR();
 
-			
+			void call_Network(DEVICE_DATA_SDP* device_data_sdp);
+			void call_SupportedFeatures(DEVICE_DATA_SDP* device_data_sdp);
+
+
 		private:
-			SHORT A2DP_source_att_array[11]{
+			SHORT att_AG_array[7]{
 				ServiceRecordHandle,
 				ServiceClassIDList,
 				ProtocolDescriptorList,
 				BluetoothProfileDescriptorList,
-				SupportedFeatures,
-				ProviderName,
-				ServiceName
+				ServiceName,
+				Network,
+				SupportedFeatures
 			};
+
 		};
-	};
+	}
 };

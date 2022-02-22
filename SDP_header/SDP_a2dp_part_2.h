@@ -1,34 +1,34 @@
 #pragma once
 
-
 namespace SDP
 {
 
-	namespace HSP
+
+	namespace A2DP
 	{
-		
-		class HSP_all_attributes : DEFAULT_all_attributes
+		class A2DP_all_attributes : DEFAULT_class
 		{
 		public:
 
-			PREMOTE_AUDIO_VOLUME_CONTROL remote_audio_volume_control_handle;
+			PSUPPORTED_FEATURES supported_features_handle;
 
-			HSP_all_attributes();
+
+			A2DP_all_attributes();
 
 			void call_ALL_ATTR(DEVICE_DATA_SDP* device_data_sdp);
 			void print_ALL_ATTR();
 
-
+			
 		private:
-			SHORT att_array[6]{
+			SHORT A2DP_source_att_array[11]{
 				ServiceRecordHandle,
 				ServiceClassIDList,
 				ProtocolDescriptorList,
 				BluetoothProfileDescriptorList,
-				ServiceName,
-				RemoteAudioVolumeControl
+				SupportedFeatures,
+				ProviderName,
+				ServiceName
 			};
-
 		};
 	};
 };

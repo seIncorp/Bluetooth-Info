@@ -7,7 +7,7 @@ namespace SDP
 
 	namespace AVRCP
 	{
-		class AVRCP_all_attributes : DEFAULT_all_attributes
+		class AVRCP_all_attributes : DEFAULT_class
 		{
 		public:
 			

@@ -163,9 +163,7 @@ namespace SDP
 
 		} SUPPORTED_FEATURES, * PSUPPORTED_FEATURES;
 
-		//int getAndParse_NETWORK_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
-		//int getAndParse_SUPPORTED_FEATURES_HFP(ULONG recordHandle, HANDLE_SDP_TYPE aa);
-
+		
 		void parse_NETWORK_HFP(PNETWORK handle);
 		void parse_SUPPORTED_FEATURES_HFP(PSUPPORTED_FEATURES handle);
 

@@ -7,7 +7,7 @@ namespace SDP
 	namespace NAP
 	{
 
-		class NAP_PANU_all_attributes : DEFAULT_all_attributes
+		class NAP_PANU_all_attributes : DEFAULT_class
 		{
 		public:
 
@@ -22,6 +22,12 @@ namespace SDP
 
 			void call_ALL_ATTR(DEVICE_DATA_SDP* device_data_sdp);
 			void print_ALL_ATTR();
+
+			void call_LanguageBaseAttributeIDList(DEVICE_DATA_SDP* device_data_sdp);
+			void call_ServiceDescription(DEVICE_DATA_SDP* device_data_sdp);
+			void call_SecurityDescription(DEVICE_DATA_SDP* device_data_sdp);
+			void call_NetAccessType(DEVICE_DATA_SDP* device_data_sdp);
+			void call_MaxNetAccessrate(DEVICE_DATA_SDP* device_data_sdp);
 
 
 		private:

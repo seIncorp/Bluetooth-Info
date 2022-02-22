@@ -174,7 +174,8 @@ int IOCTL_S::SDPsearch()	// TODO: preimenuj v pravo ime
 	/* INIT */
 
 	SDP::DEVICE_DATA_SDP* device_data_sdp = new SDP::DEVICE_DATA_SDP();
-	char test_add[] = "A8:B8:6E:E7:5A:B6";
+	//char test_add[] = "A8:B8:6E:E7:5A:B6";
+	char test_add[] = "00:9E:C8:AF:BD:13";
 
 	SDP::FUNCTIONS::SDP_INIT_CONNECT::init_for_IOCTL_BTH_SDP_CONNECT(test_add, device_data_sdp);
 
@@ -190,7 +191,7 @@ int IOCTL_S::SDPsearch()	// TODO: preimenuj v pravo ime
 
 		// TODO: naredi se za ostale service (trenutno je samo za enega)
 
-		device_data_sdp->current_used_service = SDP::Headset;
+		device_data_sdp->current_used_service = SDP::AudioSource;
 
 		SDP::FUNCTIONS::SDP_SERVICE_SEARCH::init_for_IOCTL_BTH_SDP_SERVICE_SEARCH(device_data_sdp);
 
@@ -236,7 +237,7 @@ int IOCTL_S::SDPsearch()	// TODO: preimenuj v pravo ime
 			if (device_data_sdp->current_used_service == SDP::Handsfree)
 			{
 				// DONE!
-				SDP::HFP::HFP_all_attributes test_bb = SDP::HFP::HFP_all_attributes();
+				SDP::HFP::HFP_class test_bb = SDP::HFP::HFP_class();
 				test_bb.call_ALL_ATTR(device_data_sdp);
 				test_bb.print_ALL_ATTR();
 			}
@@ -279,7 +280,16 @@ int IOCTL_S::SDPsearch()	// TODO: preimenuj v pravo ime
 			}
 
 
-			
+			if (device_data_sdp->current_used_service == SDP::GenericAudio)
+			{
+				// DONE!
+				SDP::DEFAULT_class test_bb = SDP::DEFAULT_class();
+				test_bb.callDefaultAttributes(device_data_sdp);
+				test_bb.printDefaultData();
+			}
+
+
+
 			//if (SDP::FUNCTIONS::getAndParse_SERVICE_NAME(device_data_sdp->buffer_res[0], device_data_sdp->bsc->HANDLE_SDP_FIELD_NAME) == 0)
 				//printf("ERROR [getAndParse_SERVICE_NAME]\n");
 

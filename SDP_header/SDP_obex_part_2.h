@@ -5,7 +5,7 @@ namespace SDP
 
 	namespace OBEX
 	{
-		class OBEX_all_attributes : DEFAULT_all_attributes
+		class OBEX_all_attributes : DEFAULT_class
 		{
 		public:
 
